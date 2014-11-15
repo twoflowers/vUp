@@ -13,23 +13,14 @@ logger = logging.getLogger(shared_config.api_log_root_name + __name__)
 
 
 def jsonified(data, code=None):
-    resp = {"data": data.message,
-            "status": code or 500,
-            "success": False} if isinstance(data, Exception) else {"data": data,
-                                                                   "status": code or 200,
-                                                                   "success": True}
+    resp = {"data": data.message, "status": code or 500, "success": False} if isinstance(data, Exception)\
+        else {"data": data, "status": code or 200, "success": True}
     logger.debug("responding with {d}".format(d=resp))
     return jsonify(data=resp)
 
 
 def register_error_handlers(flask_app, *errors_handled):
-    """
-    For bulk registering errors that are handled in same manner
-
-    :param app: flask app instance
-    :param errors: errors we wish to register
-    :return: (None)
-    """
+    """ bulk registering errors that are handled in same manner """
 
     def handler(error):
         logger.debug("handler sending error %r to jsonified" % error)
