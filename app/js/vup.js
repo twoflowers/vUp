@@ -2,6 +2,13 @@ var vup = angular.module('vup', ['LocalStorageModule']);
 
 vup.controller('dashboard', ['$rootScope', '$scope', '$location', '$http', 'localStorageService', function ($rootScope, $scope, $location, $http, localStorageService) {
     console.log("Dashboard started.");
+
+    jQuery.UIkit.notify({
+        message : 'Good news, everybody!',
+        status  : 'info',
+        timeout : 5000,
+        pos     : 'top-center'
+    });
 }]);
 
 /* Start angularLocalStorage */
