@@ -4,7 +4,7 @@ docker-repo:
     - name: deb http://get.docker.io/ubuntu docker main
     - key_url: https://get.docker.io/gpg
 docker:
-  pkg.latest:
+  pkg.installed:
     - name: lxc-docker 
     - require:
       - pkgrepo: docker-repo
@@ -17,4 +17,8 @@ docker:
     - require:
       - pkg: docker
     - watch_in:
+      - service: docker
+docker pull debian:latest:
+  cmd.run:
+    - require:
       - service: docker
