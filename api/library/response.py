@@ -1,7 +1,6 @@
 # builtin
 import logging
 
-
 # config
 from config import shared_config
 
@@ -23,7 +22,7 @@ def register_error_handlers(flask_app, *errors_handled):
     """ bulk registering errors that are handled in same manner """
 
     def handler(error):
-        logger.debug("handler sending error %r to jsonified" % error)
+        logger.debug("sending error %r to jsonified" % error)
         return jsonified(data=error)
 
     logger.debug("registering error handlers %r" % str(errors_handled))
