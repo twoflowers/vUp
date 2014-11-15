@@ -7,7 +7,7 @@ uwsgi-plugin-python:
   pkg.installed:
     - require:
       - pkg: uwsgi
-/etc/uwsgi/apps-enabled/vup:
+/etc/uwsgi/apps-enabled/vup.ini:
   file.managed:
     - source: salt://uwsgi.ini
     - require:
