@@ -1,17 +1,41 @@
+# builtin
+import logging
+
+
+# config
+from config import shared_config
+
 # third party
 from flask import jsonify
 
+
+logger = logging.getLogger(shared_config.api_log_root_name + __name__)
+
+
 def jsonified(data, code=None):
-    resp = {"data": None, "status": None, "success": None}
-    if isinstance(data, Exception):  # give generic exception response
-        resp['data'] = "{m} ({t})".format(m=data.message, t=str(type(data))[7:-2])
-        resp['status'] = code or 500
-        resp['success'] = False
-
-    if isinstance(data, (tuple, dict, list, str, int, long, unicode)):
-        resp['data'] = data
-        resp['status'] = code or 200
-        resp['success'] = True
-
+    resp = {"data": data.message,
+            "status": code or 500,
+            "success": False} if isinstance(data, Exception) else {"data": data,
+                                                                   "status": code or 200,
+                                                                   "success": True}
+    logger.debug("responding with {d}".format(d=resp))
     return jsonify(data=resp)
 
+
+def register_error_handlers(flask_app, *errors_handled):
+    """
+    For bulk registering errors that are handled in same manner
+
+    :param app: flask app instance
+    :param errors: errors we wish to register
+    :return: (None)
+    """
+
+    def handler(error):
+        logger.debug("handler sending error %r to jsonified" % error)
+        return jsonified(data=error)
+
+    logger.debug("registering error handlers %r" % str(errors_handled))
+    for error in errors_handled:
+            flask_app.register_error_handler(code_or_exception=error, f=handler)
+    logger.debug("finished registering error handlers")
