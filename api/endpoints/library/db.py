@@ -12,7 +12,7 @@ logger = logging.getLogger(shared_config.api_log_root_name + __name__)
 pipe = redis.StrictRedis(host=shared_config.redis_host).pipeline()
 
 
-def tables():
+def keys():
     results = pipe.keys("*").execute()[0]
     try:
         if results:
