@@ -14,6 +14,7 @@ from config import shared_config
 
 # blueprints
 from status.controllers import status_blueprint
+from projects.controllers import projects_blueprint
 
 
 class AppVars(object):
@@ -28,6 +29,7 @@ app.url_map.strict_slashes = False
 
 # Register blueprint(s)
 app.register_blueprint(status_blueprint)
+app.register_blueprint(projects_blueprint)
 
 
 #HTTP Error Handling
