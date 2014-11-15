@@ -43,8 +43,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     docker1.vm.network :private_network, ip: "192.168.4.20"
     docker1.vm.hostname = "docker1.dev"
 
-    docker1.vm.network "forwarded_port", guest: 80, host: 80
-
     docker1.vm.synced_folder "salt/roots", "/srv"
 
     # Hosts management plugin for Vagrant
