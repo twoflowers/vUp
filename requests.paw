@@ -58,7 +58,7 @@
     </object>
     <object type="LMREQUEST" id="z103">
         <attribute name="uuid" type="string">C80C614F-3195-48BC-BFFD-D61A62FB2381</attribute>
-        <attribute name="url" type="string">http://localhost:5000/vup/v1/status</attribute>
+        <attribute name="url" type="string">http://localhost:5000/v1/status</attribute>
         <attribute name="timeoutinterval" type="float">30</attribute>
         <attribute name="redirectmethod" type="bool">0</attribute>
         <attribute name="redirectauthorization" type="bool">0</attribute>
@@ -92,7 +92,7 @@
     </object>
     <object type="LMREQUEST" id="z106">
         <attribute name="uuid" type="string">4A46EB7A-EF90-465A-BB45-28734EDBC50D</attribute>
-        <attribute name="url" type="string">http://localhost:5000/vup/v1/projects/</attribute>
+        <attribute name="url" type="string">http://localhost:5000/v1/projects/</attribute>
         <attribute name="timeoutinterval" type="float">30</attribute>
         <attribute name="redirectmethod" type="bool">0</attribute>
         <attribute name="redirectauthorization" type="bool">0</attribute>
