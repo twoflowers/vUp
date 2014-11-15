@@ -7,5 +7,5 @@ base:
       - uwsgi
       - pip
       - redis
-  'vocker*':
+  'docker*':
       - docker
