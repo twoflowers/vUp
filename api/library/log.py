@@ -5,7 +5,8 @@ from flask import g
 # shared
 from config import shared_config
 
-def log_filter_factory():
+
+def factory():
     class LogFilter(logging.Filter):
         def filter(self, record):
             try:
@@ -20,16 +21,14 @@ def log_filter_factory():
     return LogFilter
 
 
-def log_root_setup(log_config):
-    debug_log = log_config.api_log_debug
-
-    LogFilter = log_filter_factory()
+def setup():
+    LogFilter = factory()
     formatter = logging.Formatter(shared_config.api_log_format)
     logger = logging.getLogger(shared_config.api_log_root_name[:-1])  # root doesn't need trailing '.'
     logger.setLevel(logging.DEBUG)
 
     # debug log
-    log_handler_debug = logging.FileHandler(debug_log)
+    log_handler_debug = logging.FileHandler(shared_config.api_log_debug)
     log_handler_debug.setLevel(logging.DEBUG)
     log_handler_debug.setFormatter(formatter)
     log_handler_debug.addFilter(LogFilter())
