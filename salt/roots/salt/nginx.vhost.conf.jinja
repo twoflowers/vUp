@@ -4,6 +4,10 @@ server {
     root /usr/local/vup/app;
     index index.html index.htm;
     server_name vup.dev www.vup.dev localhost;
+    location /api/ {
+        include uwsgi_params;
+        uwsgi_pass 127.0.0.1:8080;
+    }
     location / {
         # First attempt to serve request as file, then
         # as directory, then fall back to displaying a 404.
