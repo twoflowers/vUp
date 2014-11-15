@@ -35,7 +35,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     vocker1.vm.box_url = "https://vagrantcloud.com/ubuntu/boxes/trusty64"
 
     vocker1.vm.network :private_network, ip: "192.168.4.20"
-    vocker1.vm.hostname = "vocker11.dev"
+    vocker1.vm.hostname = "vocker1.dev"
     vocker1.vm.synced_folder "salt/roots", "/srv"
 
     # Hosts management plugin for Vagrant
