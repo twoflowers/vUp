@@ -32,9 +32,9 @@ def proj_exists(project_id):
 
 # endpoint gate
 def project_create(name, containers, version, project_id=None):
-    new_project_id = project_id or str(int(time()))
+    new_project_id = str(int(project_id or time()))
 
-    if proj_exists(new_project_id) and not project_id:
+    if proj_exists(new_project_id):
         new_project_id = str(int(time()) + 1)
     else:
         logger.debug("project {p} exists, updating".format(p=project_id))
@@ -60,7 +60,7 @@ def project_create(name, containers, version, project_id=None):
         # TODO rollback on error, deleting keys possibly created
         raise exc.SystemInvalid()
 
-    return {"project_id": new_project_id, "created": True}
+    return {"project_id": new_project_id, "state": "created"}
 
 
 def project_delete(project_id):
@@ -71,9 +71,10 @@ def project_delete(project_id):
 
     try:
         project = project_listing(project_id)[0]
-        db.pipe.delete(key=proj_key(project_id))
+        db.pipe.delete(proj_key(project_id)).execute()
         c = docker.get_client(host_url="tcp://docker1:2375")
         docker.delete_all_containers_from_proj(docker_client=c, project_name=project["name"])
+        return {"project_id": project_id, "state": "destroyed"}
 
     except Exception as e:
         logger.error("failed to delete project because %s" % e, exc_info=True)
@@ -107,9 +108,14 @@ def project_listing(project_id=None):
 
 
 def project_update(name, containers, version, project_id):
-    project_delete(project_id=project_id)
-    project_create(name=name, containers=containers, version=version)
-    return {"project_id": project_id, "updated": True}
+    try:
+        project_delete(project_id=project_id)
+        project_create(name=name, containers=containers, version=version, project_id=project_id)
+        return {"project_id": project_id, "state": "updated"}
+    except Exception as e:
+        logger.debug("failed to update project {p} because {e}".format(p=project_id, e=e), exc_info=True)
+        raise exc.SystemInvalid()
+        # TODO rollback?
 
 
 
