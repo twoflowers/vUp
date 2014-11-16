@@ -25,7 +25,7 @@ def jsonified(data, code=None):
         resp = {"data": data, "status": code or 200, "success": True}
 
     logger.debug("responding with ({s}){d}".format(d=resp, s=resp['status']))
-    return jsonify(resp)
+    return jsonify(resp), resp['status']
 
 
 def register_error_handlers(flask_app, *errors_handled):
