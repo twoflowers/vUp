@@ -34,3 +34,7 @@ check apache:
     cmd.run:
         - name: docker build -t vups/vup_apache .
         - cwd: /home/vagrant/docker/apache/
+check php-fpm:
+    cmd.run:
+        - name: docker build -t vups/vup_php_fpm .
+        - cwd: /home/vagrant/docker/php-fpm/

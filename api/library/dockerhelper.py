@@ -45,11 +45,11 @@ def create_mysql(docker_client, container_name, db_name, db_user, db_pass=None, 
                 "MYSQL_USER": db_user,
                 "MYSQL_PASS": db_pass if db_pass is not None else "**Random**",
             }
-    return create_container(docker_client, "mysql:latest", container_name, env)
+    return create_container(docker_client, "vups/vup_mysql", container_name, env)
 
 def create_nginx(docker_client, container_name, links=None, ports=None):
     # Links can be specified with the links argument. They can either be specified as a dictionary mapping name to alias or as a list of (name, alias) tuples.
-    return create_container(docker_client=docker_client, image_name="debian", container_name=container_name, env=None, links=links, ports=ports)
+    return create_container(docker_client=docker_client, image_name="vups/vup_nginx", container_name=container_name, env=None, links=links, ports=ports)
 
 def create_storage(docker_client, container_name, storage_url):
     if 'local://' in storage_url:
@@ -60,10 +60,10 @@ def create_storage(docker_client, container_name, storage_url):
         raise RuntimeError("%s not supported.  Use local://" % storage_url)
 
 def create_apache(docker_client, container_name, volumes_from, links, ports=None):
-    return create_container(docker_client=docker_client, container_name=container_name, image_name="apache", volumes_from=volumes_from, links=links, ports=ports)
+    return create_container(docker_client=docker_client, container_name=container_name, image_name="vups/vup_apache", volumes_from=volumes_from, links=links, ports=ports)
 
 def create_phpfpm(docker_client, container_name, volumes_from, links, ports=None):
-    return create_container(docker_client=docker_client, image_name="php-fpm", container_name=container_name, volumes_from=[volumes_from], links=links, ports=ports)
+    return create_container(docker_client=docker_client, image_name="vups/vup_phpfpm", container_name=container_name, volumes_from=[volumes_from], links=links, ports=ports)
 
 def get_ip(docker_client, container_id):
     return docker_client.inspect_container(container=container_id)['NetworkSettings']['IPAddress']
