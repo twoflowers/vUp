@@ -67,18 +67,30 @@ def project_delete(project_id):
     logger.debug("entered delete({args})".format(args=locals()))
 
     if not proj_exists(project_id):
-        raise exc.UserNotFound("no project with id {i}".format(id=project_id))
+        raise exc.UserNotFound("there's no project to delete with id {id}".format(id=project_id))
 
     try:
-        project = project_listing(project_id)[0]
+        project = project_listing(project_id)[0] # could possibly be used for rollback?
         db.pipe.delete(proj_key(project_id)).execute()
+    except Exception as e:
+        logger.debug("failed to remove project from db because %s" % e, exc_info=True)
+        raise exc.SystemInvalid()
+
+    try:
         c = docker.get_client(host_url="tcp://docker1:2375")
         docker.delete_all_containers_from_proj(docker_client=c, project_name=project["name"])
         return {"project_id": project_id, "state": "destroyed"}
 
+    except APIError as e:
+        if e.is_client_error() and "No such container" in e.explanation:
+            raise exc.SystemInvalid("couldn't find project container(s) to delete...")
+        else:
+            raise exc.SystemInvalid("couldn't delete project container(s) because %s" % e.explanation)
+
+
     except Exception as e:
-        logger.error("failed to delete project because %s" % e, exc_info=True)
-        raise exc.SystemInvalid()
+        logger.error("failed to delete project containers from docker because %s" % e, exc_info=True)
+        raise exc.SystemInvalid()  # now rollback?
 
 
 def project_listing(project_id=None):
