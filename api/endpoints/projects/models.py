@@ -11,15 +11,10 @@ from config import shared_config
 
 logger = logging.getLogger(shared_config.api_log_root_name + __name__)
 
+
 # helpers
-
-
-def proj_name_encode(name):
-    return str(name).encode('base64', 'strict')
-
-
 def proj_name(name):
-    return "projects:project:" + proj_name_encode(name)
+    return "projects:project:" + str(name).encode('base64', 'strict')
 
 
 def cons_name(name, element):
