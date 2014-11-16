@@ -43,6 +43,14 @@ def update(project_id):
     except Exception:
         raise errors.InvalidUsage()
 
+@projects_blueprint.route("/<project_id>", methods=['DELETE'])
+def remove(project_id):
+    try:
+        return jsonified(data=models.project_delete(project_id=project_id))
+
+    except Exception:
+        raise errors.InvalidUsage()
+
 
 @projects_blueprint.route("/", methods=["POST"])
 def create():
