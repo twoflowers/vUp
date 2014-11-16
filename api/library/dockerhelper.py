@@ -30,9 +30,13 @@ def create_container(docker_client, image_name, container_name, env=None, links=
         vol_binding = None
 
     if ports is not None:
-        port_binding = {}
-        for port in ports:
-            port_binding[port] = ('0.0.0.0', )
+        try:
+            port_binding = {}
+            for port in ports:
+                port_no = int(port)
+                port_binding[port] = ('0.0.0.0', )
+        except Exception as e:
+            raise RuntimeError("Port must be int: %r" % e)
     else:
         port_binding = None
     response = docker_client.start(container=container.get('Id'), links=links, binds=vol_binding, volumes_from=volumes_from, port_bindings=port_binding)
@@ -63,6 +67,8 @@ def create_apache(docker_client, container_name, volumes_from, links, ports=None
     return create_container(docker_client=docker_client, container_name=container_name, image_name="vups/vup_apache", volumes_from=volumes_from, links=links, ports=ports)
 
 def create_phpfpm(docker_client, container_name, volumes_from, links, ports=None):
+    if volumes_from is None:
+        raise RuntimeError("volumes_from can not be None for create_phpfpm")
     return create_container(docker_client=docker_client, image_name="vups/vup_php_fpm", container_name=container_name, volumes_from=[volumes_from], links=links, ports=ports)
 
 def get_ip(docker_client, container_id):
