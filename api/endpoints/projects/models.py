@@ -72,8 +72,8 @@ def listing(name=None):
             project_names = db.keys("projects:project:*") or []
             logger.debug("returning list of all projects: {p}".format(p=project_names))
 
-            for project_name in project_names:
-                db.pipe.get(name=project_name)
+            for project in project_names:
+                db.pipe.get(name=project["name"])
 
             return [json.loads(project) for project in db.pipe.execute()]
         except Exception as e:
