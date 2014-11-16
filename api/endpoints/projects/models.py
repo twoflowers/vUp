@@ -19,7 +19,9 @@ def proj_id(project_id):
 
 
 def proj_exists(project_id):
-    return db.pipe.exists(name=proj_id(project_id)).execute()[0]
+    proj_key = proj_id(project_id)
+    logger.debug("checking if proj key {p}".format(p=proj_key))
+    return db.pipe.exists(name=proj_key).execute()[0]
 
 
 # endpoint gate
