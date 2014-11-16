@@ -9,16 +9,16 @@ docker:
     - require:
       - pkgrepo: docker-repo
   service.running:
-    - name: docker.io
+    - name: docker
     - enable: true
-/etc/default/docker.io:
+/etc/default/docker:
   file.managed:
     - source: salt://docker-config.conf.jinja
     - require:
       - pkg: docker
     - watch_in:
       - service: docker
-docker pull debian:latest:
+docker pull debian:
   cmd.run:
     - require:
       - service: docker
