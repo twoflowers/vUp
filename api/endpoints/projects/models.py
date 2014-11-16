@@ -64,7 +64,7 @@ def listing(name=None):
     if name:  # return only that project
         if proj_exists(name=name):
             logger.debug("project {n} exists, pulling detail".format(n=name))
-            return json.loads(db.pipe.get(name=proj_name(name=name)).execute())
+            return json.loads(db.pipe.get(name=proj_name(name=name)))
         else:
             raise errors.NotFound()
     else:  # return list of details
