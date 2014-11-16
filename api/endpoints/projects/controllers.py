@@ -9,7 +9,7 @@ from flask import Blueprint, request
 
 # shared
 from library.response import jsonified
-from library import errors
+from library import errors, exc
 
 # module
 import models
@@ -41,9 +41,6 @@ def update(project_name):
         raise errors.InvalidUsage()
 
 
-
-    # update
-
 @projects_blueprint.route("/", methods=["POST"])
 def create():
     try:  # get project fields
@@ -56,13 +53,11 @@ def create():
         logger.error("failed to setup variables passed in because %s" % e, exc_info=True)
         raise errors.InvalidUsage()
 
-    # if not isinstance(containers, list) or \
-    #         any(not isinstance(container, dict) for container in containers) or \
-    #         any(not isinstance(v, (int, unicode, str, long)) for con in containers for k, v in con.iteritems()):
-    #     raise errors.InvalidUsage("invalid container format")
-
     try:
         return jsonified(data=models.create(name=name, containers=containers, version=version))
+
+    except exc.UserInvalidUsage as e:
+        raise errors.InvalidUsage(e)
 
     except Exception as e:
         logger.error("failed to create new project because %s" % e, exc_info=True)
