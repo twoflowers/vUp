@@ -83,6 +83,7 @@ def project_delete(project_id):
 
     except APIError as e:
         if e.is_client_error() and "No such container" in e.explanation:
+            logger.error("docker says : {s}".format(s=e.explanation))
             raise exc.SystemInvalid("couldn't find project container(s) to delete...")
         else:
             raise exc.SystemInvalid("couldn't delete project container(s) because %s" % e.explanation)
@@ -126,6 +127,9 @@ def project_listing(project_id=None):
 
 def project_update(name, containers, version, project_id):
     try:
+        if not proj_exists(project_id):
+            raise exc.UserNotFound("there is no project {p}".format(p=project_id))
+
         project_delete(project_id=project_id)
         project_create(name=name, containers=containers, version=version, project_id=project_id)
         return {"project_id": project_id, "state": "updated"}
