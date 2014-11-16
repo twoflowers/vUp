@@ -99,10 +99,50 @@
                                         IP: {{container.ip}}
                                         URL: <a href="http://{{container.url}}">{{container.url}}</a>
                                     </div>
+
                                     <div ng-show="container.name == 'php'">
                                         Status:
                                         <div class="uk-badge uk-badge-success"><i class="uk-icon-check uk-margin-small-right"></i> RUNNING</div>
                                         <div class="uk-badge uk-badge-danger"><i class="uk-icon-close uk-margin-small-right"></i> STOPPED</div>
+                                    </div>
+
+                                    <div ng-show="container.type == 'storage'">
+                                        "name": "appstorage",
+                                        "type": "storage",
+                                        "data_source": "local:///home/vagrant/"
+                                    </div>
+
+                                    <div ng-show="container.name == 'mysql'">
+                                        <form class="uk-form">
+                                            <div class="uk-form-row">
+                                                <div class="uk-form-controls uk-grid">
+                                                    <div class="uk-width-1-4">
+                                                        DB Name:
+                                                    </div>
+                                                    <div class="uk-width-1-4">
+                                                        <input type="text" ng-model="container.mysql_name" class="vup-short-input">
+                                                    </div>
+                                                    <div class="uk-width-1-4">
+                                                        DB User:
+                                                    </div>
+                                                    <div class="uk-width-1-4">
+                                                        <input type="text" ng-model="container.mysql_user" class="vup-short-input">
+                                                    </div>
+                                                    <div class="uk-width-1-4">
+                                                        DB Port:
+                                                    </div>
+                                                    <div class="uk-width-1-4">
+                                                        <input type="text" ng-model="container.ports[0]" class="vup-short-input">
+                                                    </div>
+                                                    <div class="uk-width-1-4">
+                                                        DB Pass:
+                                                    </div>
+                                                    <div class="uk-width-1-4">
+                                                        <input type="text" ng-model="container.mysql_pass" class="vup-short-input">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
                                     </div>
                                 </div>
                                 <div class="uk-width-1-10 uk-text-right">

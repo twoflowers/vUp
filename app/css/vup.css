@@ -45,3 +45,7 @@
     padding-top: 0;
     padding-bottom: 0;
 }
+
+.vup-short-input {
+    width: 85px;
+}

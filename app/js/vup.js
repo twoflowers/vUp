@@ -79,6 +79,7 @@ vup.controller('dashboard', ['$rootScope', '$scope', '$location', '$http', 'loca
         }
 
         $scope.project.containers.push(data);
+        $rootScope.$broadcast('Project:LocalChange');
     };
 
     $scope.loadProject = function (id) {
@@ -152,6 +153,7 @@ vup.controller('dashboard', ['$rootScope', '$scope', '$location', '$http', 'loca
             if (angular.equals($scope.project.containers[index], $scope.containerToDelete)) {
                 $scope.project.containers.splice(index, 1);
                 $scope.modal.hide();
+                $rootScope.$broadcast('Project:LocalChange');
             }
         }
     };
@@ -179,15 +181,19 @@ vup.controller('dashboard', ['$rootScope', '$scope', '$location', '$http', 'loca
 
     $rootScope.$on('Project:LocalChange', function () {
         var method = '';
+        var url = '/projects';
         if ($scope.project.id) {
             method = 'PUT';
+            url = url + '/' + $scope.project.id;
         } else {
             method = 'POST';
         }
 
+
+
         console.log(method, $scope.project);
 
-        $http({method: method, data: $scope.project, url: apiUrl + '/projects'})
+        $http({method: method, data: $scope.project, url: apiUrl + url})
             .success(function (response) {
                 $scope.projects = response.data;
                 $rootScope.$broadcast('Project:Change');
