@@ -13,8 +13,8 @@ logger = logging.getLogger(shared_config.api_log_root_name + __name__)
 # helpers
 
 
-def proj_name(key):
-    return "projects:project:" + key
+def proj_name(name):
+    return "projects:project:" + name
 
 
 def cons_name(name):
