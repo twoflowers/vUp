@@ -5,7 +5,7 @@
     <databaseInfo>
         <version>134481920</version>
         <UUID>41E2B462-3E1D-48DA-9B57-892E81664734</UUID>
-        <nextObjectID>115</nextObjectID>
+        <nextObjectID>119</nextObjectID>
         <metadata>
             <plist version="1.0">
                 <dict>
@@ -108,7 +108,7 @@
         <attribute name="order" type="int64">1</attribute>
         <attribute name="name" type="string">uswgi</attribute>
         <relationship name="parent" type="0/1" destination="LMREQUESTTREEITEM"></relationship>
-        <relationship name="children" type="0/0" destination="LMREQUESTTREEITEM" idrefs="z106 z103"></relationship>
+        <relationship name="children" type="0/0" destination="LMREQUESTTREEITEM" idrefs="z103 z106"></relationship>
         <relationship name="bodyparameters" type="0/0" destination="LMKEYVALUE"></relationship>
         <relationship name="headers" type="0/0" destination="LMKEYVALUE"></relationship>
         <relationship name="urlparameters" type="0/0" destination="LMKEYVALUE"></relationship>
@@ -122,7 +122,7 @@
         <attribute name="redirectauthorization" type="bool">0</attribute>
         <attribute name="method" type="string">GET</attribute>
         <attribute name="followredirects" type="bool">0</attribute>
-        <attribute name="order" type="int64">0</attribute>
+        <attribute name="order" type="int64">2</attribute>
         <attribute name="name" type="string">list</attribute>
         <relationship name="parent" type="0/1" destination="LMREQUESTTREEITEM" idrefs="z113"></relationship>
         <relationship name="children" type="0/0" destination="LMREQUESTTREEITEM"></relationship>
@@ -175,7 +175,7 @@
         <attribute name="order" type="int64">0</attribute>
         <attribute name="name" type="string">project</attribute>
         <relationship name="parent" type="0/1" destination="LMREQUESTTREEITEM" idrefs="z110"></relationship>
-        <relationship name="children" type="0/0" destination="LMREQUESTTREEITEM" idrefs="z108 z115"></relationship>
+        <relationship name="children" type="0/0" destination="LMREQUESTTREEITEM" idrefs="z108 z117 z119 z115"></relationship>
         <relationship name="bodyparameters" type="0/0" destination="LMKEYVALUE"></relationship>
         <relationship name="headers" type="0/0" destination="LMKEYVALUE"></relationship>
         <relationship name="urlparameters" type="0/0" destination="LMKEYVALUE"></relationship>
@@ -191,18 +191,68 @@
         <relationship name="request" type="0/1" destination="LMREQUEST" idrefs="z115"></relationship>
     </object>
     <object type="LMREQUEST" id="z115">
-        <attribute name="body" type="string">["{\\n    \\"name\\": \\"Demo App\\",\\n    \\"version\\": \\"0.01\\",\\n    \\"containers\\": [\\n        {\\n            \\"name\\": \\"appstorage\\",\\n            \\"type\\": \\"storage\\",\\n            \\"data_source\\": \\"local:\\/\\/\\/home\\/vagrant\\/\\"\\n        },\\n        {\\n            \\"name\\": \\"db\\",\\n            \\"type\\": \\"mysql\\",\\n            \\"mysql_name\\": \\"demo\\",\\n            \\"mysql_user\\": \\"demouser\\",\\n            \\"mysql_pass\\": \\"demopass\\",\\n            \\"mysql_sql\\": \\"\\/demoapp.sql\\"\\n        },\\n        {\\n            \\"name\\": \\"app\\",\\n            \\"type\\": \\"php\\",\\n            \\"volumes_from\\": \\"appstorage\\",\\n            \\"link\\": [\\"db\\"],\\n            \\"scale_min\\": 1,\\n            \\"scale_max\\": 5\\n        },\\n        {\\n            \\"name\\": \\"web\\",\\n            \\"type\\": \\"nginx\\",\\n            \\"link\\": [\\"app\\"],\\n            \\"scale_min\\": 1,\\n            \\"scale_max\\": 3\\n        },\\n        {\\n            \\"name\\": \\"apache1\\",\\n            \\"type\\": \\"apache\\",\\n            \\"link\\": [\\"app\\", \\"db\\"],\\n            \\"scale_min\\": 1,\\n            \\"scale_max\\": 3\\n        }\\n    ]\\n}\\n"]</attribute>
+        <attribute name="body" type="string">["{\\n    \\"name\\": \\"Demo App\\",\\n    \\"version\\": \\"0.01\\",\\n    \\"containers\\": [\\n        {\\n            \\"name\\": \\"appstorage\\",\\n            \\"type\\": \\"storage\\",\\n            \\"data_source\\": \\"local:\\/\\/\\/home\\/vagrant\\/\\"\\n        },\\n        {\\n            \\"name\\": \\"db\\",\\n            \\"type\\": \\"mysql\\",\\n            \\"mysql_name\\": \\"demo\\",\\n            \\"mysql_user\\": \\"demouser\\",\\n            \\"mysql_pass\\": \\"demopass\\",\\n            \\"mysql_sql\\": \\"\\/demoapp.sql\\"\\n        },\\n        {\\n            \\"name\\": \\"app\\",\\n            \\"type\\": \\"php\\",\\n            \\"volumes_from\\": \\"appstorage\\",\\n            \\"link\\": [\\"db\\"],\\n            \\"scale_min\\": 1,\\n            \\"scale_max\\": 5\\n        },\\n        {\\n            \\"name\\": \\"web\\",\\n            \\"type\\": \\"nginx\\",\\n            \\"link\\": [\\"app\\"],\\n            \\"scale_min\\": 1,\\n            \\"scale_max\\": 3,\\n            \\"ports\\": [80, 443]\\n        },\\n        {\\n            \\"name\\": \\"apache1\\",\\n            \\"type\\": \\"apache\\",\\n            \\"link\\": [\\"app\\", \\"db\\"],\\n            \\"scale_min\\": 1,\\n            \\"scale_max\\": 3,\\n            \\"ports\\": [80, 443]\\n        }\\n    ]\\n}\\n"]</attribute>
         <attribute name="uuid" type="string">10868975-D006-4949-BC57-D2149819643E</attribute>
+        <attribute name="url" type="string">http://192.168.4.2:5000/api/v1/projects/1416134053</attribute>
+        <attribute name="timeoutinterval" type="float">30</attribute>
+        <attribute name="redirectmethod" type="bool">0</attribute>
+        <attribute name="redirectauthorization" type="bool">0</attribute>
+        <attribute name="method" type="string">DELETE</attribute>
+        <attribute name="followredirects" type="bool">0</attribute>
+        <attribute name="order" type="int64">3</attribute>
+        <attribute name="name" type="string">delete</attribute>
+        <relationship name="parent" type="0/1" destination="LMREQUESTTREEITEM" idrefs="z113"></relationship>
+        <relationship name="children" type="0/0" destination="LMREQUESTTREEITEM"></relationship>
+        <relationship name="headers" type="0/0" destination="LMKEYVALUE" idrefs="z114"></relationship>
+    </object>
+    <object type="LMKEYVALUE" id="z116">
+        <attribute name="value" type="string"></attribute>
+        <attribute name="order" type="int64">0</attribute>
+        <attribute name="name" type="string"></attribute>
+        <attribute name="enabled" type="bool">1</attribute>
+        <relationship name="groupforbodyparameters" type="0/1" destination="LMREQUESTGROUP"></relationship>
+        <relationship name="groupforheaders" type="0/1" destination="LMREQUESTGROUP"></relationship>
+        <relationship name="groupforurlparameters" type="0/1" destination="LMREQUESTGROUP"></relationship>
+        <relationship name="request" type="0/1" destination="LMREQUEST" idrefs="z117"></relationship>
+    </object>
+    <object type="LMREQUEST" id="z117">
+        <attribute name="uuid" type="string">51E1F40A-8001-4EF9-9245-2CAAA1F03468</attribute>
         <attribute name="url" type="string">http://192.168.4.2:5000/api/v1/projects</attribute>
         <attribute name="timeoutinterval" type="float">30</attribute>
         <attribute name="redirectmethod" type="bool">0</attribute>
         <attribute name="redirectauthorization" type="bool">0</attribute>
         <attribute name="method" type="string">POST</attribute>
         <attribute name="followredirects" type="bool">0</attribute>
+        <attribute name="body" type="string">["{\\n    \\"name\\": \\"Demo App\\",\\n    \\"version\\": \\"0.01\\",\\n    \\"containers\\": [\\n        {\\n            \\"name\\": \\"appstorage\\",\\n            \\"type\\": \\"storage\\",\\n            \\"data_source\\": \\"local:\\/\\/\\/home\\/vagrant\\/\\"\\n        },\\n        {\\n            \\"name\\": \\"db\\",\\n            \\"type\\": \\"mysql\\",\\n            \\"mysql_name\\": \\"demo\\",\\n            \\"mysql_user\\": \\"demouser\\",\\n            \\"mysql_pass\\": \\"demopass\\",\\n            \\"mysql_sql\\": \\"\\/demoapp.sql\\"\\n        },\\n        {\\n            \\"name\\": \\"app\\",\\n            \\"type\\": \\"php\\",\\n            \\"volumes_from\\": \\"appstorage\\",\\n            \\"link\\": [\\"db\\"],\\n            \\"scale_min\\": 1,\\n            \\"scale_max\\": 5\\n        },\\n        {\\n            \\"name\\": \\"web\\",\\n            \\"type\\": \\"nginx\\",\\n            \\"link\\": [\\"app\\"],\\n            \\"scale_min\\": 1,\\n            \\"scale_max\\": 3,\\n            \\"ports\\": [80, 443]\\n        },\\n        {\\n            \\"name\\": \\"apache1\\",\\n            \\"type\\": \\"apache\\",\\n            \\"link\\": [\\"app\\", \\"db\\"],\\n            \\"scale_min\\": 1,\\n            \\"scale_max\\": 3,\\n            \\"ports\\": [80, 443]\\n        }\\n    ]\\n}\\n"]</attribute>
         <attribute name="order" type="int64">1</attribute>
         <attribute name="name" type="string">create</attribute>
         <relationship name="parent" type="0/1" destination="LMREQUESTTREEITEM" idrefs="z113"></relationship>
         <relationship name="children" type="0/0" destination="LMREQUESTTREEITEM"></relationship>
-        <relationship name="headers" type="0/0" destination="LMKEYVALUE" idrefs="z114"></relationship>
+        <relationship name="headers" type="0/0" destination="LMKEYVALUE" idrefs="z116"></relationship>
+    </object>
+    <object type="LMKEYVALUE" id="z118">
+        <attribute name="value" type="string"></attribute>
+        <attribute name="order" type="int64">0</attribute>
+        <attribute name="name" type="string"></attribute>
+        <attribute name="enabled" type="bool">1</attribute>
+        <relationship name="groupforbodyparameters" type="0/1" destination="LMREQUESTGROUP"></relationship>
+        <relationship name="groupforheaders" type="0/1" destination="LMREQUESTGROUP"></relationship>
+        <relationship name="groupforurlparameters" type="0/1" destination="LMREQUESTGROUP"></relationship>
+        <relationship name="request" type="0/1" destination="LMREQUEST" idrefs="z119"></relationship>
+    </object>
+    <object type="LMREQUEST" id="z119">
+        <attribute name="uuid" type="string">AE20F9C9-0932-4241-96D5-C87B00C81243</attribute>
+        <attribute name="url" type="string">http://192.168.4.2:5000/api/v1/projects/1416135236</attribute>
+        <attribute name="timeoutinterval" type="float">30</attribute>
+        <attribute name="redirectmethod" type="bool">0</attribute>
+        <attribute name="redirectauthorization" type="bool">0</attribute>
+        <attribute name="method" type="string">PUT</attribute>
+        <attribute name="followredirects" type="bool">0</attribute>
+        <attribute name="body" type="string">["{\\n    \\"name\\": \\"Demo App Name Changed\\",\\n    \\"version\\": \\"0.01\\",\\n    \\"containers\\": [\\n        {\\n            \\"name\\": \\"appstorage\\",\\n            \\"type\\": \\"storage\\",\\n            \\"data_source\\": \\"local:\\/\\/\\/home\\/vagrant\\/\\"\\n        },\\n        {\\n            \\"name\\": \\"db\\",\\n            \\"type\\": \\"mysql\\",\\n            \\"mysql_name\\": \\"demo\\",\\n            \\"mysql_user\\": \\"demouser\\",\\n            \\"mysql_pass\\": \\"demopass\\",\\n            \\"mysql_sql\\": \\"\\/demoapp.sql\\"\\n        },\\n        {\\n            \\"name\\": \\"app\\",\\n            \\"type\\": \\"php\\",\\n            \\"volumes_from\\": \\"appstorage\\",\\n            \\"link\\": [\\"db\\"],\\n            \\"scale_min\\": 1,\\n            \\"scale_max\\": 5\\n        },\\n        {\\n            \\"name\\": \\"web\\",\\n            \\"type\\": \\"nginx\\",\\n            \\"link\\": [\\"app\\"],\\n            \\"scale_min\\": 1,\\n            \\"scale_max\\": 3,\\n            \\"ports\\": [80, 443]\\n        },\\n        {\\n            \\"name\\": \\"apache1\\",\\n            \\"type\\": \\"apache\\",\\n            \\"link\\": [\\"app\\", \\"db\\"],\\n            \\"scale_min\\": 1,\\n            \\"scale_max\\": 3,\\n            \\"ports\\": [80, 443]\\n        }\\n    ]\\n}\\n"]</attribute>
+        <attribute name="order" type="int64">0</attribute>
+        <attribute name="name" type="string">update</attribute>
+        <relationship name="parent" type="0/1" destination="LMREQUESTTREEITEM" idrefs="z113"></relationship>
+        <relationship name="children" type="0/0" destination="LMREQUESTTREEITEM"></relationship>
+        <relationship name="headers" type="0/0" destination="LMKEYVALUE" idrefs="z118"></relationship>
     </object>
 </database>
