@@ -6,6 +6,7 @@ from config import shared_config
 
 # third party
 from flask import jsonify
+from werkzeug.exceptions import MethodNotAllowed
 
 # shared
 from library import errors
@@ -14,13 +15,21 @@ logger = logging.getLogger(shared_config.api_log_root_name + __name__)
 
 
 def jsonified(data, code=None):
-    if isinstance(data, (Exception, errors.Errors)):
+    if isinstance(data, (Exception, errors.Errors, MethodNotAllowed)):
         try:
             status = code or data.status
         except:
-            status = code or 500
+            try:
+                status = code or data.code
+            except:
+                status = code or 500
+        if isinstance(data, MethodNotAllowed):
+            message = data.description
+        else:
+            message = data.message
 
-        resp = {"data": data.message, "status": status, "success": False}
+
+        resp = {"data": message, "status": status, "success": False}
     else:
         resp = {"data": data, "status": code or 200, "success": True}
 
