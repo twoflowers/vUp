@@ -127,12 +127,16 @@ def project_listing(project_id=None):
 
 def project_update(name, containers, version, project_id):
     try:
-        if not proj_exists(project_id):
-            raise exc.UserNotFound("there is no project {p}".format(p=project_id))
-
         project_delete(project_id=project_id)
         project_create(name=name, containers=containers, version=version, project_id=project_id)
         return {"project_id": project_id, "state": "updated"}
+
+    except exc.UserNotFound:
+        raise exc.UserInvalidUsage("there's no project '{i}' to update".format(i=project_id))
+
+    except exc.UserInvalidUsage as e:
+        raise exc.UserInvalidUsage("unable to update project because %s" % e)
+
     except Exception as e:
         logger.debug("failed to update project {p} because {e}".format(p=project_id, e=e), exc_info=True)
         raise exc.SystemInvalid()
