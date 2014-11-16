@@ -26,7 +26,10 @@ vup.controller('dashboard', ['$rootScope', '$scope', '$location', '$http', 'loca
         'nginx': {
             'name': 'nginx',
             'label': 'nginx',
-            'type': 'nginx'
+            'type': 'nginx',
+            'link': ['php'],
+            'ports': [80, 443],
+            'volumes_from': 'folder'
         },
         'mysql': {
             'name': 'mysql',
@@ -36,12 +39,14 @@ vup.controller('dashboard', ['$rootScope', '$scope', '$location', '$http', 'loca
             'mysql_user': 'demouser',
             'mysql_pass': 'demopass',
             'mysql_sql': 'whateverIwant!',
-            "ports": [3306]
+            'ports': [3306]
         },
         'php': {
             'name': 'php',
             'label': 'php',
-            'type': 'php'
+            'type': 'php',
+            'volumes_from': 'folder',
+            'link': ['mysql']
         },
         'uwsgi': {
             'name': 'uwsgi',
@@ -56,7 +61,9 @@ vup.controller('dashboard', ['$rootScope', '$scope', '$location', '$http', 'loca
         'apache': {
             'name': 'apache',
             'label': 'apache',
-            'type': 'apache'
+            'type': 'apache',
+            'ports': [80, 443],
+            'volumes_from': 'folder'
         },
         'folder': {
             'name': 'folder',
