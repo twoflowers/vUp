@@ -57,7 +57,9 @@ def create():
     except Exception as e:
         raise errors.InvalidUsage()
 
-    if not isinstance(containers, list) or any(not isinstance(c, (int, unicode, str, long)) for c in containers):
+    if not isinstance(containers, list) or \
+            any(not isinstance(container, dict) for container in containers) or \
+            any(not isinstance(v, (int, unicode, str, long)) for con in containers for k, v in con.iteritems()):
         raise errors.InvalidUsage("invalid container format")
 
     try:
