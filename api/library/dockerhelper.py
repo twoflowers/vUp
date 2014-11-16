@@ -94,3 +94,13 @@ def create_containers_from_proj(docker_client, project_name, project_containers)
             result = create_phpfpm(docker_client=docker_client, container_name=container_name, volumes_from=volumes_from, links=links)
 
     return True
+
+def delete_all_containers_from_proj(docker_client, project_name):
+    """ Looks for any vms that begin with the prefix of the project name.   TODO:  Do something else. """
+    containers = docker_client.containers(all=True)
+    prefix = project_name.strip().replace(' ', '_').lower() + "_" 
+    for c in containers:
+        for container_name in c['Names']:
+            if prefix in container_name:
+                logger.info("Deleting container with name: %s" % container_name)
+                c.remove_container(container=c['Id'], force=True)
