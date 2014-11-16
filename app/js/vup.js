@@ -4,12 +4,17 @@ vup.controller('dashboard', ['$rootScope', '$scope', '$location', '$http', 'loca
     console.log("Dashboard started.");
 
     $scope.projects = [];
-    $scope.project = {};
-    $scope.project['name'] = 'New Project';
-    $scope.project['newName'] = '';
-    $scope.project['containers'] = [];
-    $scope.project['version'] = "0.01";
-    $scope.project['id'] = false;
+
+    $scope.newProject = function () {
+        $scope.project = {};
+        $scope.project['name'] = 'New Project';
+        $scope.project['newName'] = '';
+        $scope.project['containers'] = [];
+        $scope.project['version'] = "0.01";
+        $scope.project['id'] = '';
+    };
+
+    $scope.newProject();
 
     $scope.modal = null;
 
@@ -51,6 +56,52 @@ vup.controller('dashboard', ['$rootScope', '$scope', '$location', '$http', 'loca
         }
 
         $scope.project.containers.push(data);
+    };
+
+    $scope.loadProject = function (id) {
+        for (var index in $scope.projects) {
+            if (id == $scope.projects[index].id) {
+                $scope.project = $scope.projects[index];
+                $scope.notify({
+                    message : 'Loaded project ' + $scope.project.name,
+                    status  : 'success',
+                    timeout : 3000,
+                    pos     : 'bottom-center'
+                });
+            }
+        }
+    };
+
+    $scope.deleteProject = function () {
+        if (!$scope.project.id) {
+            $scope.newProject();
+            return;
+        }
+        $http({method: 'DELETE', data: $scope.project, url: apiUrl + '/projects/' + $scope.project.id})
+            .success(function (response) {
+                $scope.newProject();
+                $scope.refreshPending = false;
+                $scope.loading = false;
+                $scope.notify({
+                    message : 'Deleted project successfully!',
+                    status  : 'success',
+                    timeout : 3000,
+                    pos     : 'bottom-center'
+                });
+                $scope.refresh();
+            })
+            .error(function (error) {
+                $scope.projects = [];
+                $scope.refreshPending = false;
+                $scope.loading = false;
+                console.log('Failed to list projects...', error);
+                $scope.notify({
+                    message : 'Bad news, everybody! ' + error,
+                    status  : 'danger',
+                    timeout : 3000,
+                    pos     : 'bottom-center'
+                });
+            });
     };
 
     $scope.editProjectName = function ($event, start) {
@@ -131,10 +182,12 @@ vup.controller('dashboard', ['$rootScope', '$scope', '$location', '$http', 'loca
     $rootScope.$on('Project:LocalChange', function () {
         var method = '';
         if ($scope.project.id) {
-            method = 'POST';
-        } else {
             method = 'PUT';
+        } else {
+            method = 'POST';
         }
+
+        console.log(method, $scope.project);
 
         $http({method: method, data: $scope.project, url: apiUrl + '/projects'})
             .success(function (response) {
