@@ -18,7 +18,7 @@ docker:
       - pkg: docker
     - watch_in:
       - service: docker
-docker pull debian:
+sleep 10; docker pull debian:
   cmd.run:
     - require:
       - service: docker
