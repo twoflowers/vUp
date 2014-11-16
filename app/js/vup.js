@@ -67,6 +67,7 @@ vup.controller('dashboard', ['$rootScope', '$scope', '$location', '$http', 'loca
             if ($event.which == 13) {
                 $scope.project.editName = 0;
                 $scope.project.name = $scope.project.newName;
+                $rootScope.$broadcast('Project:LocalChange');
             }
 
             if ($event.which == 27) {
@@ -103,7 +104,7 @@ vup.controller('dashboard', ['$rootScope', '$scope', '$location', '$http', 'loca
         $http({method: 'GET', url: apiUrl + '/projects'})
             .success(function (response) {
                 $scope.projects = response.data;
-                $rootScope.$broadcast('Blocks:Change');
+                $rootScope.$broadcast('Project:Change');
                 $scope.refreshPending = false;
                 $scope.loading = false;
                 $scope.notify({
@@ -126,6 +127,43 @@ vup.controller('dashboard', ['$rootScope', '$scope', '$location', '$http', 'loca
                 });
             });
     };
+
+    $rootScope.$on('Project:LocalChange', function () {
+        var method = '';
+        if ($scope.project.id) {
+            method = 'POST';
+        } else {
+            method = 'PUT';
+        }
+
+        $http({method: method, data: $scope.project, url: apiUrl + '/projects'})
+            .success(function (response) {
+                $scope.projects = response.data;
+                $rootScope.$broadcast('Project:Change');
+                $scope.refreshPending = false;
+                $scope.loading = false;
+                $scope.notify({
+                    message : 'Good news, everybody! ',
+                    status  : 'success',
+                    timeout : 3000,
+                    pos     : 'bottom-center'
+                });
+            })
+            .error(function (error) {
+                $scope.projects = [];
+                $scope.refreshPending = false;
+                $scope.loading = false;
+                console.log('Failed to list projects...', error);
+                $scope.notify({
+                    message : 'Bad news, everybody! ' + error,
+                    status  : 'danger',
+                    timeout : 3000,
+                    pos     : 'bottom-center'
+                });
+            });
+
+        $scope.refresh();
+    });
 
     $scope.notify = jQuery.UIkit.notify;
     $scope.refresh();
