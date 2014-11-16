@@ -5,8 +5,11 @@ vup.controller('dashboard', ['$rootScope', '$scope', '$location', '$http', 'loca
 
     $scope.projects = [];
     $scope.project = {};
-    $scope.project['name'] = 'Project';
+    $scope.project['name'] = 'New Project';
+    $scope.project['newName'] = '';
     $scope.project['containers'] = [];
+    $scope.project['version'] = "0.01";
+    $scope.project['id'] = false;
 
     $scope.modal = null;
 
@@ -37,7 +40,7 @@ vup.controller('dashboard', ['$rootScope', '$scope', '$location', '$http', 'loca
     $scope.containerToDelete = null;
 
 
-    var apiUrl = '';
+    var apiUrl = '/api/v1';
 
     $scope.dropped = function (data, event) {
         console.log('Dropped', data, event);
@@ -48,6 +51,29 @@ vup.controller('dashboard', ['$rootScope', '$scope', '$location', '$http', 'loca
         }
 
         $scope.project.containers.push(data);
+    };
+
+    $scope.editProjectName = function ($event, start) {
+        if (start) {
+            $scope.project.editName = 1;
+            if (!$scope.project.newName) $scope.project.newName = $scope.project.name;
+            jQuery('#edit-project-name').focus();
+        } else {
+            $scope.project.editName = 0;
+            $scope.project.newName = '';
+        }
+
+        if ($event.which) {
+            if ($event.which == 13) {
+                $scope.project.editName = 0;
+                $scope.project.name = $scope.project.newName;
+            }
+
+            if ($event.which == 27) {
+                $scope.project.editName = 0;
+                $scope.project.newName = '';
+            }
+        }
     };
 
     $scope.deleteContainer = function (container) {
@@ -102,7 +128,7 @@ vup.controller('dashboard', ['$rootScope', '$scope', '$location', '$http', 'loca
     };
 
     $scope.notify = jQuery.UIkit.notify;
-    //$scope.refresh();
+    $scope.refresh();
 }]);
 
 /* Start angularLocalStorage */
