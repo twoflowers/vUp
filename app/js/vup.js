@@ -88,20 +88,33 @@ vup.controller('dashboard', ['$rootScope', '$scope', '$location', '$http', 'loca
         $scope.project.containers.push(data);
 
         var hasStorage = false;
+        var hasPhp = false;
         for (var index in $scope.project.containers) {
             if ($scope.project.containers[index].type == 'storage') {
                 hasStorage = true;
+            }
+            if ($scope.project.containers[index].type == 'php') {
+                hasPhp = true;
             }
         }
 
         if (data.type == 'nginx') {
             if (!hasStorage) {
-                $scope.project.containers.push($scope.stacklets.php);
                 $scope.project.containers.push($scope.stacklets.storage);
             }
+            if (!hasPhp) {
+                $scope.project.containers.push($scope.stacklets.php);
+            }
+
         }
 
         if (data.type == 'apache') {
+            if (!hasStorage) {
+                $scope.project.containers.push($scope.stacklets.storage)
+            }
+        }
+
+        if (data.type == 'php') {
             if (!hasStorage) {
                 $scope.project.containers.push($scope.stacklets.storage)
             }
@@ -193,6 +206,12 @@ vup.controller('dashboard', ['$rootScope', '$scope', '$location', '$http', 'loca
         $http({method: 'GET', url: apiUrl + '/projects'})
             .success(function (response) {
                 $scope.projects = response.data;
+                for (var index in response.data) {
+                    var project = response.data[index];
+                    if ($scope.project.id == project.id) {
+                        $scope.project = project;
+                    }
+                }
                 $rootScope.$broadcast('Project:Change');
                 $scope.refreshPending = false;
                 $scope.loading = false;
