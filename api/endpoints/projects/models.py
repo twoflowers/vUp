@@ -12,13 +12,18 @@ logger = logging.getLogger(shared_config.api_log_root_name + __name__)
 
 # helpers
 
+def proj_name_encode(name):
+    return str(name).encode('base64', 'strict')
+
+def proj_name_decode(name):
+    return str(name.decode('base64', 'strict'))
 
 def proj_name(name):
-    return "projects:project:" + name
+    return "projects:project:" + proj_name_encode(name)
 
 
-def cons_name(name):
-    return proj_name(name) + ":containers:"
+def cons_name(name, element):
+    return proj_name(name) + ":containers:" + element
 
 
 def proj_exists(name):
@@ -33,8 +38,8 @@ def create_project(name, containers, version):
     project = {"name": "projects:" + name, "version": version}
     db.pipe.hmset(name=proj_name(name), mapping=project)  # establish project
 
-    for container in containers:
-        db.pipe.hmset(name=cons_name(name), mapping=container)  # establish container
+    for i, container in enumerate(containers):
+        db.pipe.hmset(name=cons_name(name, element=i), mapping=container)  # establish container
 
     try:
         result = db.pipe.execute()
