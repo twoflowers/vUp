@@ -49,3 +49,27 @@ def create_phpfpm(docker_client, container_name, storage_container, db_container
 
 def get_ip(docker_client, container_id):
     return docker_client.inspect_container(container=container_id)['NetworkSettings']['IPAddress']
+
+def create_containers_from_proj(docker_client, project_name, project_containers):
+    prefix = project_name.strip().replace(' ').lower() + "_"
+    # TODO: Get a list of existing containers for project
+    # TODO: Error handling
+    for container in project_containers:
+        clean_name = container['name'].strip().replace(' ').lower()
+        container_name = "%s%s" % (prefix, clean_name) 
+
+        if 'link' in container:
+            links = []
+            for link in container['link']:
+                links.append(("%s%s" % (prefix, link.strip().replace(" ").lower())), link)
+        else:
+            links = None
+
+        if container['type'] == "storage":
+            return create_storage(docker_client=docker_client, container_name=container_name, storage_url=container['data_source'])
+        elif container['type'] == "nginx":
+            return create_nginx(docker_client=docker_client, container_name=container_name, links=links)
+        elif container['type'] == "mysql":
+            return create_mysql(docker_client=docker_client, container_name=container_name, db_name=container['mysql_name'], db_user=container['mysql_user'], db_pass=container['mysql_pass'], db_sql=container['mysql_sql'])
+        elif container['type'] == "php":
+            return create_phpfpm(docker_client=docker_client, container_name=container_name, volumes_from=[container['volumes_from']], links=links)
