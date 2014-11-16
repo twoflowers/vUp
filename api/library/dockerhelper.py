@@ -133,8 +133,11 @@ def delete_all_containers_from_proj(docker_client, project_name):
     """ Looks for any vms that begin with the prefix of the project name.   TODO:  Do something else. """
     containers = docker_client.containers(all=True)
     prefix = project_name.strip().replace(' ', '_').lower() + "_" 
-    for c in containers:
-        for container_name in c['Names']:
+    for container in containers:
+        for container_name in container['Names']:
             if prefix in container_name:
-                logger.info("Deleting container with name: %s" % container_name)
-                docker_client.remove_container(container=c['Id'], force=True)
+                try:
+                    logger.info("deleting container with name: {n}, container: {c}".format(n=container_name, c=container))
+                    docker_client.remove_container(container=container['Id'], force=True, v=True)
+                except:
+                    continue # FIND OUT WHAT TO DO
