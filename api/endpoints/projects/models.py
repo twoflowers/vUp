@@ -63,6 +63,23 @@ def project_create(name, containers, version, project_id=None):
     return {"project_id": new_project_id, "created": True}
 
 
+def project_delete(project_id):
+    logger.debug("entered delete({args})".format(args=locals()))
+
+    if not proj_exists(project_id):
+        raise exc.UserNotFound("no project with id {i}".format(id=project_id))
+
+    try:
+        project = project_listing(project_id)
+        db.pipe.delete(key=proj_id(project_id))
+        c = docker.get_client(host_url="tcp://docker1:2375")
+        docker.delete_all_containers_from_proj(docker_client=c, project_name=project["name"])
+
+    except Exception as e:
+        logger.error("failed to delete project because %s" % e, exc_info=True)
+        raise exc.SystemInvalid()
+
+
 def project_listing(project_id=None):
     logger.debug("entered listing({args})".format(args=locals()))
 
