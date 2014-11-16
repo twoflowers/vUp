@@ -94,7 +94,7 @@
                                     <hr class="uk-article-divider uk-margin-small-top uk-margin-small-bottom">
                                     <div ng-show="container.name == 'apache' && container.ip">
                                         IP: {{container.ip}}
-                                        URL: <a href="http://{{container.url}}">{{container.url}}</a>
+                                        URL: <a href="http://{{container.url}}/index.php">{{container.url}}</a>
                                     </div>
 
                                     <div ng-show="container.name == 'php'">
@@ -111,7 +111,7 @@
                                                         URL:
                                                     </div>
                                                     <div class="uk-width-3-4">
-                                                        <a href="{{container.info.url}}" target="_blank">{{container.info.url}}</a>
+                                                        <a href="{{container.info.url}}/index.php" target="_blank">{{container.info.url}}</a>
                                                     </div>
                                                 </div>
                                             </div>

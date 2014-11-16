@@ -68,7 +68,7 @@ vup.controller('dashboard', ['$rootScope', '$scope', '$location', '$http', 'loca
             'name': 'storage',
             'label': 'source folder',
             'type': 'storage',
-            'data_source': "local:///home/vagrant/"
+            'data_source': "local:///home/vagrant/demo"
         }
     };
 
