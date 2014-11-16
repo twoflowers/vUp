@@ -70,7 +70,7 @@ def project_delete(project_id):
         raise exc.UserNotFound("no project with id {i}".format(id=project_id))
 
     try:
-        project = project_listing(project_id)
+        project = project_listing(project_id)[0]
         db.pipe.delete(key=proj_key(project_id))
         c = docker.get_client(host_url="tcp://docker1:2375")
         docker.delete_all_containers_from_proj(docker_client=c, project_name=project["name"])
