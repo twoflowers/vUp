@@ -48,7 +48,14 @@ def remove(project_id):
     try:
         return jsonified(data=models.project_delete(project_id=project_id))
 
-    except Exception:
+    except exc.SystemInvalid as e:
+        raise errors.Unhandled(e)
+
+    except exc.UserNotFound as e:
+        raise errors.InvalidUsage(e)
+
+    except Exception as e:
+        logger.error("failed to delete because %s" % e, exc_info=True)
         raise errors.InvalidUsage()
 
 
