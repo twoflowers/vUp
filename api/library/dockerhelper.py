@@ -151,7 +151,7 @@ def create_containers_from_proj(docker_client, project_name, project_containers)
         if php_app_ip is not None:
             env['PHP_FPM_IP'] = php_app_ip
         if mysql_env is not None:
-            env = env.update(mysql_env)
+            env.update(mysql_env)
 
         ports = None if 'ports' not in container else container['ports']
 
