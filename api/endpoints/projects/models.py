@@ -60,7 +60,7 @@ def create(name, containers, version):
 
 
 def listing(name=None):
-
+    logger.debug("entered listing({args})".format(args=name))
     if name:  # return only that project
         if proj_exists(name=name):
             logger.debug("project {n} exists, pulling detail".format(n=name))
