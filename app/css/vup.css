@@ -49,3 +49,6 @@
 .vup-short-input {
     width: 85px;
 }
+.vup-long-input {
+    width: 255px;
+}

@@ -61,7 +61,7 @@
             <div class="uk-width-2-10">
                 <div class="uk-panel uk-panel-box" ng-repeat="stacklet in stacklets" ng-drag="true" ng-drag-data="stacklet">
                     <div class="uk-panel-teaser">
-                        <img ng-src="images/{{stacklet.name}}-logo.png" alt="">
+                        <img ng-src="images/{{stacklet.type}}-logo.png" alt="">
                     </div>
                     <h4 class="uk-text-center uk-margin-small-top">{{stacklet.label}}</h4>
                 </div>
@@ -90,7 +90,7 @@
                         <div class="uk-panel uk-panel-box">
                             <div class="uk-grid">
                                 <div class="uk-width-1-10 ">
-                                    <div class="uk-background-cover vup-settings-logo" style="background-image: url(images/{{container.name}}-logo-v.png)"></div>
+                                    <div class="uk-background-cover vup-settings-logo" style="background-image: url(images/{{container.type}}-logo-v.png)"></div>
                                 </div>
                                 <div class="uk-width-8-10">
                                     <h4>{{container.label}}</h4>
@@ -107,9 +107,18 @@
                                     </div>
 
                                     <div ng-show="container.type == 'storage'">
-                                        "name": "appstorage",
-                                        "type": "storage",
-                                        "data_source": "local:///home/vagrant/"
+                                        <form class="uk-form">
+                                            <div class="uk-form-row">
+                                                <div class="uk-form-controls uk-grid">
+                                                    <div class="uk-width-1-4">
+                                                        Source:
+                                                    </div>
+                                                    <div class="uk-width-3-4">
+                                                        <input type="text" ng-model="container.data_source" class="vup-long-input">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
                                     </div>
 
                                     <div ng-show="container.name == 'mysql'">
