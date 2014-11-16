@@ -1,40 +1,39 @@
 # built-in
-import logging
 from time import time
 
-# 3rd party library
+# third party library
 from flask import Flask
 
 # module library
 
 # config
-from config import shared_config
 
 # library library
+from library import response
+from library import errors
+from library import log
 
 # blueprints
 from status.controllers import status_blueprint
+from projects.controllers import projects_blueprint
 
-
-class AppVars(object):
-        pass
-
-
-# Define the WSGI application object, cloudstack application object
+# define flask app
 app = Flask(__name__)
 app.config.from_object('config.app')
 app.url_map.strict_slashes = False
 
 
-# Register blueprint(s)
+# register blueprint(s)
 app.register_blueprint(status_blueprint)
+app.register_blueprint(projects_blueprint)
 
 
-#HTTP Error Handling
+# http error handling
+response.register_error_handlers(app, 400, 404, 405, 500, errors.NotFound, errors.Unhandled, errors.InvalidUsage)
+logger = log.setup()
 
-logger = logging.getLogger(shared_config.api_log_root_name + __name__)
 
-# Before App Request Functions
+# before app request functions
 @app.before_first_request
 def setup_app():
     logger.debug("starting up vUp version {v} started {s}".format(v=1, s=time()))

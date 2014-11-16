@@ -1,0 +1,44 @@
+{
+    "name": "Demo App 5",
+    "version": "0.01",
+    "containers": [
+        {
+            "name": "appstorage",
+            "type": "storage",
+            "data_source": "local:///home/vagrant/"
+        },
+        {
+            "name": "db",
+            "type": "mysql",
+            "mysql_name": "demo",
+            "mysql_user": "demouser",
+            "mysql_pass": "demopass",
+            "mysql_sql": "/demoapp.sql",
+            "ports": [3306]
+        },
+        {
+            "name": "app",
+            "type": "php",
+            "volumes_from": "appstorage",
+            "link": ["db"],
+            "scale_min": 1,
+            "scale_max": 5
+        },
+        {
+            "name": "web",
+            "type": "nginx",
+            "link": ["app"],
+            "scale_min": 1,
+            "scale_max": 3,
+            "ports": [80, 443]
+        },
+        {
+            "name": "apache1",
+            "type": "apache",
+            "link": ["app", "db"],
+            "scale_min": 1,
+            "scale_max": 3,
+            "ports": [80, 443]
+        }
+    ]
+}
