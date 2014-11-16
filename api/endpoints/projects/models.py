@@ -15,7 +15,7 @@ logger = logging.getLogger(shared_config.api_log_root_name + __name__)
 
 # helpers
 def proj_id(project_id):
-    return "projects:project:" + project_id
+    return "projects:project:{id}".format(id=project_id)
 
 
 def proj_exists(project_id):
