@@ -4,9 +4,17 @@ vup.controller('dashboard', ['$rootScope', '$scope', '$location', '$http', 'loca
     console.log("Dashboard started.");
 
     $scope.projects = [];
-    $scope.project = {};
-    $scope.project['name'] = 'Project';
-    $scope.project['containers'] = [];
+
+    $scope.newProject = function () {
+        $scope.project = {};
+        $scope.project['name'] = 'New Project';
+        $scope.project['newName'] = '';
+        $scope.project['containers'] = [];
+        $scope.project['version'] = "0.01";
+        $scope.project['id'] = '';
+    };
+
+    $scope.newProject();
 
     $scope.modal = null;
 
@@ -37,7 +45,7 @@ vup.controller('dashboard', ['$rootScope', '$scope', '$location', '$http', 'loca
     $scope.containerToDelete = null;
 
 
-    var apiUrl = '';
+    var apiUrl = '/api/v1';
 
     $scope.dropped = function (data, event) {
         console.log('Dropped', data, event);
@@ -48,6 +56,76 @@ vup.controller('dashboard', ['$rootScope', '$scope', '$location', '$http', 'loca
         }
 
         $scope.project.containers.push(data);
+    };
+
+    $scope.loadProject = function (id) {
+        for (var index in $scope.projects) {
+            if (id == $scope.projects[index].id) {
+                $scope.project = $scope.projects[index];
+                $scope.notify({
+                    message : 'Loaded project ' + $scope.project.name,
+                    status  : 'success',
+                    timeout : 3000,
+                    pos     : 'bottom-center'
+                });
+            }
+        }
+    };
+
+    $scope.deleteProject = function () {
+        if (!$scope.project.id) {
+            $scope.newProject();
+            return;
+        }
+        $http({method: 'DELETE', data: $scope.project, url: apiUrl + '/projects/' + $scope.project.id})
+            .success(function (response) {
+                $scope.newProject();
+                $scope.refreshPending = false;
+                $scope.loading = false;
+                $scope.notify({
+                    message : 'Deleted project successfully!',
+                    status  : 'success',
+                    timeout : 3000,
+                    pos     : 'bottom-center'
+                });
+                $scope.refresh();
+            })
+            .error(function (error) {
+                $scope.projects = [];
+                $scope.refreshPending = false;
+                $scope.loading = false;
+                console.log('Failed to list projects...', error);
+                $scope.notify({
+                    message : 'Bad news, everybody! ' + error,
+                    status  : 'danger',
+                    timeout : 3000,
+                    pos     : 'bottom-center'
+                });
+            });
+    };
+
+    $scope.editProjectName = function ($event, start) {
+        if (start) {
+            $scope.project.editName = 1;
+            if (!$scope.project.newName) $scope.project.newName = $scope.project.name;
+            jQuery('#edit-project-name').focus();
+        } else {
+            $scope.project.editName = 0;
+            $scope.project.newName = '';
+        }
+
+        if ($event.which) {
+            if ($event.which == 13) {
+                $scope.project.editName = 0;
+                $scope.project.name = $scope.project.newName;
+                $rootScope.$broadcast('Project:LocalChange');
+            }
+
+            if ($event.which == 27) {
+                $scope.project.editName = 0;
+                $scope.project.newName = '';
+            }
+        }
     };
 
     $scope.deleteContainer = function (container) {
@@ -77,7 +155,7 @@ vup.controller('dashboard', ['$rootScope', '$scope', '$location', '$http', 'loca
         $http({method: 'GET', url: apiUrl + '/projects'})
             .success(function (response) {
                 $scope.projects = response.data;
-                $rootScope.$broadcast('Blocks:Change');
+                $rootScope.$broadcast('Project:Change');
                 $scope.refreshPending = false;
                 $scope.loading = false;
                 $scope.notify({
@@ -101,8 +179,47 @@ vup.controller('dashboard', ['$rootScope', '$scope', '$location', '$http', 'loca
             });
     };
 
+    $rootScope.$on('Project:LocalChange', function () {
+        var method = '';
+        if ($scope.project.id) {
+            method = 'PUT';
+        } else {
+            method = 'POST';
+        }
+
+        console.log(method, $scope.project);
+
+        $http({method: method, data: $scope.project, url: apiUrl + '/projects'})
+            .success(function (response) {
+                $scope.projects = response.data;
+                $rootScope.$broadcast('Project:Change');
+                $scope.refreshPending = false;
+                $scope.loading = false;
+                $scope.notify({
+                    message : 'Good news, everybody! ',
+                    status  : 'success',
+                    timeout : 3000,
+                    pos     : 'bottom-center'
+                });
+            })
+            .error(function (error) {
+                $scope.projects = [];
+                $scope.refreshPending = false;
+                $scope.loading = false;
+                console.log('Failed to list projects...', error);
+                $scope.notify({
+                    message : 'Bad news, everybody! ' + error,
+                    status  : 'danger',
+                    timeout : 3000,
+                    pos     : 'bottom-center'
+                });
+            });
+
+        $scope.refresh();
+    });
+
     $scope.notify = jQuery.UIkit.notify;
-    //$scope.refresh();
+    $scope.refresh();
 }]);
 
 /* Start angularLocalStorage */

@@ -22,3 +22,15 @@ sleep 10; docker pull debian:
   cmd.run:
     - require:
       - service: docker
+check mysql:
+    cmd.run:
+        - name: docker build -t vups/vup_mysql .
+        - cwd: /home/vagrant/docker/mysql/
+check nginx:
+    cmd.run:
+        - name: docker build -t vups/vup_nginx .
+        - cwd: /home/vagrant/docker/nginx/
+check apache:
+    cmd.run:
+        - name: docker build -t vups/vup_apache .
+        - cwd: /home/vagrant/docker/apache/

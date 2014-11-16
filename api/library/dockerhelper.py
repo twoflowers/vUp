@@ -18,7 +18,7 @@ def get_client(host_url):
 def create_container(docker_client, image_name, container_name, env=None, links=None, ports=None, volumes=None, volumes_from=None, command=None):
     #  Links can be specified with the links argument. They can either be specified as a dictionary mapping name to alias or as a list of (name, alias) tuples.
     logger.debug("Creating a new container with: %r" % locals())
-    container = docker_client.create_container(image=image_name, environment=env, name=container_name, command=command)
+    container = docker_client.create_container(image=image_name, environment=env, name=container_name, command=command, ports=ports)
     if volumes is not None:
         vol_binding = {}
         for vol in volumes:
@@ -28,7 +28,14 @@ def create_container(docker_client, image_name, container_name, env=None, links=
                     }
     else:
         vol_binding = None
-    response = docker_client.start(container=container.get('Id'), links=links, binds=vol_binding, volumes_from=volumes_from)
+
+    if ports is not None:
+        port_binding = {}
+        for port in ports:
+            port_binding[port] = ('0.0.0.0', )
+    else:
+        port_binding = None
+    response = docker_client.start(container=container.get('Id'), links=links, binds=vol_binding, volumes_from=volumes_from, port_bindings=port_binding)
     # Return the container id
     return container.get('Id')
     
@@ -40,9 +47,9 @@ def create_mysql(docker_client, container_name, db_name, db_user, db_pass=None, 
             }
     return create_container(docker_client, "mysql:latest", container_name, env)
 
-def create_nginx(docker_client, container_name, links=None):
+def create_nginx(docker_client, container_name, links=None, ports=None):
     # Links can be specified with the links argument. They can either be specified as a dictionary mapping name to alias or as a list of (name, alias) tuples.
-    return create_container(docker_client=docker_client, image_name="debian", container_name=container_name, env=None, links=links)
+    return create_container(docker_client=docker_client, image_name="debian", container_name=container_name, env=None, links=links, ports=ports)
 
 def create_storage(docker_client, container_name, storage_url):
     if 'local://' in storage_url:
@@ -52,11 +59,11 @@ def create_storage(docker_client, container_name, storage_url):
     else:
         raise RuntimeError("%s not supported.  Use local://" % storage_url)
 
-def create_apache(docker_client, container_name, volumes_from, links):
-    return create_container(docker_client=docker_client, container_name=container_name, image_name="apache", volumes_from=volumes_from, links=links)
+def create_apache(docker_client, container_name, volumes_from, links, ports=None):
+    return create_container(docker_client=docker_client, container_name=container_name, image_name="apache", volumes_from=volumes_from, links=links, ports=ports)
 
-def create_phpfpm(docker_client, container_name, volumes_from, links):
-    return create_container(docker_client=docker_client, image_name="php-fpm", container_name=container_name, volumes_from=[volumes_from], links=links) 
+def create_phpfpm(docker_client, container_name, volumes_from, links, ports=None):
+    return create_container(docker_client=docker_client, image_name="php-fpm", container_name=container_name, volumes_from=[volumes_from], links=links, ports=ports)
 
 def get_ip(docker_client, container_id):
     return docker_client.inspect_container(container=container_id)['NetworkSettings']['IPAddress']
@@ -82,15 +89,27 @@ def create_containers_from_proj(docker_client, project_name, project_containers)
         else:
             volumes_from = None
 
+        ports = None if 'ports' not in container else container['ports']
+
         if container['type'] == "storage":
             result = create_storage(docker_client=docker_client, container_name=container_name, storage_url=container['data_source'])
         elif container['type'] == "nginx":
-            result = create_nginx(docker_client=docker_client, container_name=container_name, links=links)
+            result = create_nginx(docker_client=docker_client, container_name=container_name, links=links, ports=ports)
         elif container['type'] == "apache":
-            result = create_apache(docker_client=docker_client, container_name=container_name, links=links, volumes_from=volumes_from)
+            result = create_apache(docker_client=docker_client, container_name=container_name, links=links, volumes_from=volumes_from, ports=ports)
         elif container['type'] == "mysql":
             result = create_mysql(docker_client=docker_client, container_name=container_name, db_name=container['mysql_name'], db_user=container['mysql_user'], db_pass=container['mysql_pass'], db_sql=container['mysql_sql'])
         elif container['type'] == "php":
             result = create_phpfpm(docker_client=docker_client, container_name=container_name, volumes_from=volumes_from, links=links)
 
     return True
+
+def delete_all_containers_from_proj(docker_client, project_name):
+    """ Looks for any vms that begin with the prefix of the project name.   TODO:  Do something else. """
+    containers = docker_client.containers(all=True)
+    prefix = project_name.strip().replace(' ', '_').lower() + "_" 
+    for c in containers:
+        for container_name in c['Names']:
+            if prefix in container_name:
+                logger.info("Deleting container with name: %s" % container_name)
+                c.remove_container(container=c['Id'], force=True)

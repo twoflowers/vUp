@@ -32,3 +32,16 @@
     user-select: none;
     cursor: move;
 }
+
+.vup-editable {
+    border: 0;
+    border-bottom: 1px solid #aaa;
+    outline: 0;
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 22px;
+    background: transparent;
+    color: #444;
+    padding-top: 0;
+    padding-bottom: 0;
+}

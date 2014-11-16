@@ -25,7 +25,6 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.3/moment.min.js"></script>
     <script src="js/ngdraggable.js"></script>
     <script src="js/vup.js"></script>
-
 </head>
 
 <body ng-controller="dashboard">
@@ -36,14 +35,19 @@
                 <a href=""><i class="uk-icon-bomb uk-margin-small-right"></i> Run</a>
             </li>
             <li class="uk-button-dropdown" data-uk-dropdown="">
-                <a href="" ng-dblclick=""><i class="uk-icon-archive uk-margin-small-right"></i> <strong>{{project.name}}</strong> <i class="uk-icon-caret-down uk-margin-small-left"></i></a>
+                <a href="">
+                    <i class="uk-icon-archive uk-margin-small-right"></i>
+                    <strong>{{project.name}}</strong>
+                    <i class="uk-icon-caret-down uk-margin-small-left"></i>
+                </a>
                 <div class="uk-dropdown">
                     <ul class="uk-nav uk-nav-dropdown">
-                        <li><a href=""><i class="uk-icon-plus-square uk-margin-small-right"></i> Create New Project</a></li>
+                        <li><a href="" ng-click="newProject()"><i class="uk-icon-plus-square uk-margin-small-right"></i> Create New Project</a></li>
 
                         <li class="uk-nav-header">Recent Projects</li>
-                        <li><a href=""><i class="uk-icon-archive uk-margin-small-right"></i> Project B</a></li>
-                        <li><a href=""><i class="uk-icon-archive uk-margin-small-right"></i> Project C</a></li>
+                        <li ng-repeat="project in projects">
+                            <a href="" ng-click="loadProject(project.id)"><i class="uk-icon-archive uk-margin-small-right"></i> {{project.name}}</a>
+                        </li>
 
                         <li class="uk-nav-divider"></li>
                         <li><a href=""><i class="uk-icon-power-off uk-margin-small-right"></i> Exit!</a></li>
@@ -64,10 +68,20 @@
             </div>
             <div class="uk-width-8-10" ng-drop="true" ng-drop-success="dropped($data, $event)">
                 <div class="uk-panel uk-panel-box">
-                    <div class="uk-width-1-1 uk-text-center">
-                        <h4><strong>{{project.name}}</strong></h4>
+                    <div class="uk-grid">
+                        <div class="uk-width-9-10">
+                            <h4>
+                                <strong>
+                                    <span ng-hide="project.editName" ng-dblclick="editProjectName($event, 1)">{{project.name}}</span>
+                                    <input type="text" id="edit-project-name" ng-model="project.newName" class="uk-text-center vup-editable" ng-blur="editProjectName($event, 0)" ng-keyup="editProjectName($event, 1)" ng-show="project.editName">
+                                </strong>
+                            </h4>
+                        </div>
+                        <div class="uk-width-1-10 uk-text-right">
+                            <a href="" class="uk-close uk-close-alt" ng-click="deleteProject()"></a>
+                        </div>
                     </div>
-                    <div class="uk-width-1-1 uk-margin-bottom">
+                    <div class="uk-width-1-1 uk-margin-top uk-margin-bottom">
                         <div class="uk-panel uk-panel-box vup-containers">
                             <p class="uk-text-center">Drop stuff here.</p>
                         </div>
@@ -83,7 +97,7 @@
                                     <h4>{{container.name}}</h4>
                                 </div>
                                 <div class="uk-width-1-10 uk-text-right">
-                                    <a href="#delete-container-modal" class="uk-close uk-close-alt" ng-click="deleteContainer(container)"></a>
+                                    <a href="" class="uk-close uk-close-alt" ng-click="deleteContainer(container)"></a>
                                 </div>
                             </div>
                         </div>
