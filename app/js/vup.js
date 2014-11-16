@@ -3,6 +3,10 @@ var vup = angular.module('vup', ['LocalStorageModule', 'ngDraggable']);
 vup.controller('dashboard', ['$rootScope', '$scope', '$location', '$http', 'localStorageService', function ($rootScope, $scope, $location, $http, localStorageService) {
     console.log("Dashboard started.");
 
+    $scope.notification = {};
+    $scope.notification['timeout'] = 500;
+    $scope.notification['position'] = 'bottom-center';
+
     $scope.projects = [];
 
     $scope.newProject = function () {
@@ -20,25 +24,32 @@ vup.controller('dashboard', ['$rootScope', '$scope', '$location', '$http', 'loca
 
     $scope.stacklets = {
         'nginx': {
-            'name': 'nginx'
+            'name': 'nginx',
+            'label': 'nginx'
         },
         'mysql': {
-            'name': 'mysql'
+            'name': 'mysql',
+            'label': 'mysql'
         },
         'php': {
-            'name': 'php'
+            'name': 'php',
+            'label': 'php'
         },
         'uwsgi': {
-            'name': 'uwsgi'
+            'name': 'uwsgi',
+            'label': 'uwsgi'
         },
         'haproxy': {
-            'name': 'haproxy'
+            'name': 'haproxy',
+            'label': 'ha proxy'
         },
         'apache': {
-            'name': 'apache'
+            'name': 'apache',
+            'label': 'apache'
         },
         'folder': {
-            'name': 'folder'
+            'name': 'folder',
+            'label': 'source folder'
         }
     };
 
@@ -62,12 +73,7 @@ vup.controller('dashboard', ['$rootScope', '$scope', '$location', '$http', 'loca
         for (var index in $scope.projects) {
             if (id == $scope.projects[index].id) {
                 $scope.project = $scope.projects[index];
-                $scope.notify({
-                    message : 'Loaded project ' + $scope.project.name,
-                    status  : 'success',
-                    timeout : 3000,
-                    pos     : 'bottom-center'
-                });
+                $scope.notify('<i class="uk-icon-folder-open"></i> Loaded project ' + $scope.project.name, 'success');
             }
         }
     };
@@ -82,25 +88,15 @@ vup.controller('dashboard', ['$rootScope', '$scope', '$location', '$http', 'loca
                 $scope.newProject();
                 $scope.refreshPending = false;
                 $scope.loading = false;
-                $scope.notify({
-                    message : 'Deleted project successfully!',
-                    status  : 'success',
-                    timeout : 3000,
-                    pos     : 'bottom-center'
-                });
+                $scope.notify('<i class="uk-icon-close"></i> Deleted project successfully!', 'success');
                 $scope.refresh();
             })
             .error(function (error) {
                 $scope.projects = [];
                 $scope.refreshPending = false;
                 $scope.loading = false;
-                console.log('Failed to list projects...', error);
-                $scope.notify({
-                    message : 'Bad news, everybody! ' + error,
-                    status  : 'danger',
-                    timeout : 3000,
-                    pos     : 'bottom-center'
-                });
+                console.log('Failed to delete project...', error);
+                $scope.notify('Bad news, everybody! ' + error, 'danger');
             });
     };
 
@@ -158,24 +154,14 @@ vup.controller('dashboard', ['$rootScope', '$scope', '$location', '$http', 'loca
                 $rootScope.$broadcast('Project:Change');
                 $scope.refreshPending = false;
                 $scope.loading = false;
-                $scope.notify({
-                    message : 'Good news, everybody! ',
-                    status  : 'success',
-                    timeout : 3000,
-                    pos     : 'bottom-center'
-                });
+                $scope.notify('<i class="uk-icon-exchange"></i> Loaded existing projects...', 'success');
             })
             .error(function (error) {
                 $scope.projects = [];
                 $scope.refreshPending = false;
                 $scope.loading = false;
                 console.log('Failed to list projects...', error);
-                $scope.notify({
-                    message : 'Bad news, everybody! ' + error,
-                    status  : 'danger',
-                    timeout : 3000,
-                    pos     : 'bottom-center'
-                });
+                $scope.notify('Bad news, everybody! ' + error, 'danger');
             });
     };
 
@@ -195,30 +181,28 @@ vup.controller('dashboard', ['$rootScope', '$scope', '$location', '$http', 'loca
                 $rootScope.$broadcast('Project:Change');
                 $scope.refreshPending = false;
                 $scope.loading = false;
-                $scope.notify({
-                    message : 'Good news, everybody! ',
-                    status  : 'success',
-                    timeout : 3000,
-                    pos     : 'bottom-center'
-                });
+                $scope.notify('<i class="uk-icon-save"></i> Updated project successfully!', 'success');
             })
             .error(function (error) {
                 $scope.projects = [];
                 $scope.refreshPending = false;
                 $scope.loading = false;
-                console.log('Failed to list projects...', error);
-                $scope.notify({
-                    message : 'Bad news, everybody! ' + error,
-                    status  : 'danger',
-                    timeout : 3000,
-                    pos     : 'bottom-center'
-                });
+                console.log('Failed to update project...', error);
+                $scope.notify('Bad news, everybody! ' + error, 'danger');
             });
 
         $scope.refresh();
     });
 
-    $scope.notify = jQuery.UIkit.notify;
+    $scope.notify = function (text, status) {
+        jQuery.UIkit.notify({
+            message : text,
+            status  : status,
+            timeout : $scope.notification.timeout,
+            pos     : $scope.notification.position
+        });
+    };
+
     $scope.refresh();
 }]);
 
