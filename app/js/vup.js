@@ -1,4 +1,4 @@
-var vup = angular.module('vup', ['LocalStorageModule']);
+var vup = angular.module('vup', ['LocalStorageModule', 'ngDraggable']);
 
 vup.controller('dashboard', ['$rootScope', '$scope', '$location', '$http', 'localStorageService', function ($rootScope, $scope, $location, $http, localStorageService) {
     console.log("Dashboard started.");
@@ -6,7 +6,40 @@ vup.controller('dashboard', ['$rootScope', '$scope', '$location', '$http', 'loca
     $scope.projects = [];
     $scope.project = null;
 
+    $scope.stacklets = {
+        'nginx': {
+            'name': 'nginx'
+        },
+        'mysql': {
+            'name': 'mysql'
+        },
+        'php': {
+            'name': 'php'
+        },
+        'uwsgi': {
+            'name': 'uwsgi'
+        },
+        'haproxy': {
+            'name': 'haproxy'
+        },
+        'apache': {
+            'name': 'apache'
+        }
+    };
+
+
     var apiUrl = '';
+
+    $scope.dropped = function (data, event) {
+        console.log('Dropped', data, event);
+
+        if (!$scope.project) {
+            $scope.project = {};
+            $scope.project['containers'] = [];
+        }
+
+        $scope.project.containers.push(data);
+    };
 
     $scope.refresh = function () {
         if ($scope.refreshPending) return;
@@ -40,7 +73,7 @@ vup.controller('dashboard', ['$rootScope', '$scope', '$location', '$http', 'loca
     };
 
     $scope.notify = jQuery.UIkit.notify;
-    $scope.refresh();
+    //$scope.refresh();
 }]);
 
 /* Start angularLocalStorage */
