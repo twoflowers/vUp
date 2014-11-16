@@ -4,7 +4,10 @@ vup.controller('dashboard', ['$rootScope', '$scope', '$location', '$http', 'loca
     console.log("Dashboard started.");
 
     $scope.projects = [];
-    $scope.project = null;
+    $scope.project = {};
+    $scope.project['name'] = 'Project';
+
+    $scope.modal = null;
 
     $scope.stacklets = {
         'nginx': {
@@ -24,8 +27,13 @@ vup.controller('dashboard', ['$rootScope', '$scope', '$location', '$http', 'loca
         },
         'apache': {
             'name': 'apache'
+        },
+        'folder': {
+            'name': 'folder'
         }
     };
+
+    $scope.containerToDelete = null;
 
 
     var apiUrl = '';
@@ -39,6 +47,26 @@ vup.controller('dashboard', ['$rootScope', '$scope', '$location', '$http', 'loca
         }
 
         $scope.project.containers.push(data);
+    };
+
+    $scope.deleteContainer = function (container) {
+        $scope.modal = jQuery.UIkit.modal("#delete-container-modal");
+
+        if ($scope.modal.isActive()) {
+            $scope.modal.hide();
+        } else {
+            $scope.modal.show();
+            $scope.containerToDelete = container;
+        }
+    };
+
+    $scope.confirmDeleteContainer = function() {
+        for (var index in $scope.project.containers) {
+            if (angular.equals($scope.project.containers[index], $scope.containerToDelete)) {
+                $scope.project.containers.splice(index, 1);
+                $scope.modal.hide();
+            }
+        }
     };
 
     $scope.refresh = function () {
