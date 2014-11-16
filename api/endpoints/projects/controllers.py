@@ -67,6 +67,7 @@ def create_or_update(project_id):
 
     except exc.SystemInvalid as e:
         raise errors.Unhandled(e)
+
     except exc.UserInvalidUsage as e:
         raise errors.InvalidUsage(e)
 
