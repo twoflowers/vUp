@@ -39,7 +39,9 @@ def create(name, containers, version):
     if proj_exists(name):
         raise errors.InvalidUsage("unable to overwrite existing project")
 
-    project = {"name": "projects:" + name, "version": version, "containers": containers}
+    project = {"name": name,
+               "version": version,
+               "containers": containers}
     # db.pipe.hmset(name=proj_name(name), mapping=project)  # establish project
     #
     # for i, container in enumerate(containers):
