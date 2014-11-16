@@ -26,7 +26,7 @@ class Errors(Exception):
 
     @log.setter
     def log(self, value):
-        self._log_level = value or logging.DEBUG
+        self._log_level = value or self._log_level
 
     @property
     def message(self):
