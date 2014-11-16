@@ -13,12 +13,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     vup.vm.network :private_network, ip: "192.168.4.2"
     vup.vm.hostname = "vup.dev"
 
-    vup.vm.network "forwarded_port", guest: 80, host: 80
-    vup.vm.network "forwarded_port", guest: 3306, host: 3306
-    vup.vm.network "forwarded_port", guest: 9000, host: 9000
-    vup.vm.network "forwarded_port", guest: 8080, host: 8080
-    vup.vm.network "forwarded_port", guest: 5000, host: 5000
-
     vup.vm.synced_folder ".", "/usr/local/vup"
     vup.vm.synced_folder "salt/roots", "/srv"
 
@@ -42,6 +36,14 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     docker1.vm.network :private_network, ip: "192.168.4.20"
     docker1.vm.hostname = "docker1.dev"
+
+    docker1.vm.synced_folder "Docker", "/home/vagrant/docker"
+
+    docker1.vm.network "forwarded_port", guest: 80, host: 80
+    docker1.vm.network "forwarded_port", guest: 3306, host: 3306
+    docker1.vm.network "forwarded_port", guest: 9000, host: 9000
+    docker1.vm.network "forwarded_port", guest: 8080, host: 8080
+    docker1.vm.network "forwarded_port", guest: 5000, host: 5000
 
     docker1.vm.synced_folder "salt/roots", "/srv"
 
