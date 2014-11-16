@@ -3,6 +3,10 @@ uwsgi:
     - name: uwsgi
   service.running:
     - enable: True
+    - require:
+      - pkg: uwsgi
+      - file: /etc/uwsgi/apps-enabled/vup.ini
+      - file: /var/log/uwsgi/vup.log
 uwsgi-plugin-python:
   pkg.installed:
     - require:

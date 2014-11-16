@@ -13,3 +13,6 @@ chef-client:
 salt-minion:
   service.dead:
     - enable: false
+docker1:
+  host.present:
+    - ip: 192.168.4.20
