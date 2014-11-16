@@ -7,13 +7,20 @@ from config import shared_config
 # third party
 from flask import jsonify
 
+# shared
+from library import errors
 
 logger = logging.getLogger(shared_config.api_log_root_name + __name__)
 
 
 def jsonified(data, code=None):
-    if isinstance(data, Exception):
-        resp = {"data": data.message, "status": code or 500, "success": False}
+    if isinstance(data, (Exception, errors.Errors)):
+        try:
+            status = code or data.status
+        except:
+            status = code or 500
+
+        resp = {"data": data.message, "status": status, "success": False}
     else:
         resp = {"data": data, "status": code or 200, "success": True}
 
