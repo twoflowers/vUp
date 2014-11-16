@@ -52,6 +52,7 @@ class NotFound(Errors):
     _message = "The thing that you thought you were looking for is not found in the place you'd wish it was..."
     _status_code = 404
 
+
 class Unhandled(Errors):
     _message = "Oops! You found a mistake!"
     _status_code = 500
