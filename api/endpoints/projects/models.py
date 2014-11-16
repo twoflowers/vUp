@@ -103,6 +103,11 @@ def project_listing(project_id=None):
             raise exc.SystemInvalid()
 
     projects = [json.loads(project) for project in results]
+    c = docker.get_client(host_url="tcp://docker1:2375")
+    for project in projects:
+        if 'containers' in project:
+            for container in project['containers']:
+                container['info'] = docker.get_container_info(docker_client=c, project_name=project['name'], container_name=container['name'])
     logger.debug("returning project(s) {p}".format(p=projects))
     return projects
 
