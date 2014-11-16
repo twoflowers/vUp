@@ -1,6 +1,7 @@
 # builtin
 import logging
 import json
+from time import time
 
 # shared
 from library import db
@@ -27,7 +28,7 @@ def create(name, containers, version):
         raise exc.UserInvalidUsage("unable to overwrite existing project")
 
     try:
-        project = {"name": name, "version": version, "containers": containers}
+        project = {"id": int(time()), "name": name, "version": version, "containers": containers}
         db.pipe.set(name=proj_name(name), value=json.dumps(project)).execute()
 
     except Exception as e:
