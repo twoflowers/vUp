@@ -29,7 +29,7 @@ app.register_blueprint(projects_blueprint)
 
 
 # http error handling
-response.register_error_handlers(app, 400, 404, 405, 500, errors.NotFound)
+response.register_error_handlers(app, 400, 404, 405, 500, errors.NotFound, errors.Unhandled)
 logger = log.setup()
 
 
