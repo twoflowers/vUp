@@ -63,10 +63,35 @@ def create_apache(docker_client, container_name, volumes_from, links, ports=None
     return create_container(docker_client=docker_client, container_name=container_name, image_name="vups/vup_apache", volumes_from=volumes_from, links=links, ports=ports)
 
 def create_phpfpm(docker_client, container_name, volumes_from, links, ports=None):
-    return create_container(docker_client=docker_client, image_name="vups/vup_phpfpm", container_name=container_name, volumes_from=[volumes_from], links=links, ports=ports)
+    return create_container(docker_client=docker_client, image_name="vups/vup_php_fpm", container_name=container_name, volumes_from=[volumes_from], links=links, ports=ports)
 
 def get_ip(docker_client, container_id):
     return docker_client.inspect_container(container=container_id)['NetworkSettings']['IPAddress']
+
+def get_host_port(docker_client, container_id, port_no):
+    container = docker_client.inspect_container(container=container_id)
+    host_port = container['NetworkSettings']['Ports']['%d/tcp' % port_no][0]['HostPort']
+    # TODO: Get this dynamically
+    host_ip = "192.168.4.20"
+    return "http://%s:%s/" % (host_ip, host_port)
+
+def get_container_info(docker_client, project_name, container_name):
+    try:
+        prefix = project_name.strip().replace(' ', '_').lower() + "_"
+        real_name = "%s%s" % (prefix, container_name.strip().replace(" ", '').lower())
+        container = docker_client.inspect_container(container=real_name)
+        data = {
+                    'IPAddress': container['NetworkSettings']['IPAddress'],
+                    'State': container['State']
+                }
+        if '80/tcp' in container['NetworkSettings']['Ports']:
+            data['url'] = get_host_port(docker_client, container['Id'], 80)
+    except Exception as e:
+        data = {}
+        logger.error("Error trying to get container_info: %r" % e)
+
+    return data
+
 
 def create_containers_from_proj(docker_client, project_name, project_containers):
     prefix = project_name.strip().replace(' ', '_').lower() + "_"
