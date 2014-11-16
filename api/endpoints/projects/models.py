@@ -28,15 +28,17 @@ def proj_exists(project_id):
 
 
 # endpoint gate
-def project_create(name, containers, version):
-    project_id = str(int(time()))
+def project_create(name, containers, version, project_id=None):
+    new_project_id = project_id or str(int(time()))
 
-    if proj_exists(project_id):
-        project_id = str(int(time()) + 1)
+    if proj_exists(new_project_id) and not project_id:
+        new_project_id = str(int(time()) + 1)
+    else:
+        logger.debug("project {p} exists, updating".format(p=project_id))
 
     try:
-        project = {"id": project_id, "name": name, "version": version, "containers": containers}
-        db.pipe.set(name=proj_key(project_id), value=json.dumps(project)).execute()
+        project = {"id": new_project_id, "name": name, "version": version, "containers": containers}
+        db.pipe.set(name=proj_key(new_project_id), value=json.dumps(project)).execute()
         c = docker.get_client(host_url="tcp://docker1:2375")
         docker.create_containers_from_proj(docker_client=c, project_name=name, project_containers=containers)
 
@@ -45,7 +47,7 @@ def project_create(name, containers, version):
         # TODO rollback on error, deleting keys possibly created
         raise exc.SystemInvalid()
 
-    return {"project_id": project_id, "created": True}
+    return {"project_id": new_project_id, "created": True}
 
 
 def project_listing(project_id=None):
@@ -73,6 +75,13 @@ def project_listing(project_id=None):
     logger.debug("returning project(s) {p}".format(p=projects))
     return projects
 
-def update(listing_id):
 
-    pass
+
+
+def project_delete(project_id):
+    if proj_exists(project_id):
+        db.pipe.delete(name=proj_key(project_id)).execute()
+        return {"project_id": project_id, "state": "destroyed"}
+    else:
+        raise exc.UserNotFound("no project with id {p}".format(p=project_id))
+
