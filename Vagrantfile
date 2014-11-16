@@ -38,6 +38,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     docker1.vm.hostname = "docker1.dev"
 
     docker1.vm.synced_folder "Docker", "/home/vagrant/docker"
+    docker1.vm.synced_folder "demo", "/home/vagrant/demo"
 
     docker1.vm.network "forwarded_port", guest: 80, host: 80
     docker1.vm.network "forwarded_port", guest: 3306, host: 3306
