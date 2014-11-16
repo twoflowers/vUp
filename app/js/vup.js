@@ -4,7 +4,9 @@ vup.controller('dashboard', ['$rootScope', '$scope', '$location', '$http', 'loca
     console.log("Dashboard started.");
 
     $scope.projects = [];
-    $scope.project = null;
+    $scope.project = {};
+    $scope.project['name'] = 'Project';
+
     $scope.modal = null;
 
     $scope.stacklets = {
@@ -30,6 +32,7 @@ vup.controller('dashboard', ['$rootScope', '$scope', '$location', '$http', 'loca
             'name': 'folder'
         }
     };
+
     $scope.containerToDelete = null;
 
 

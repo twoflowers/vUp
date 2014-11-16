@@ -36,7 +36,7 @@
                 <a href=""><i class="uk-icon-bomb uk-margin-small-right"></i> Run</a>
             </li>
             <li class="uk-button-dropdown" data-uk-dropdown="">
-                <a href=""><i class="uk-icon-archive uk-margin-small-right"></i> <strong>Project A</strong> <i class="uk-icon-caret-down uk-margin-small-left"></i></a>
+                <a href="" ng-dblclick=""><i class="uk-icon-archive uk-margin-small-right"></i> <strong>{{project.name}}</strong> <i class="uk-icon-caret-down uk-margin-small-left"></i></a>
                 <div class="uk-dropdown">
                     <ul class="uk-nav uk-nav-dropdown">
                         <li><a href=""><i class="uk-icon-plus-square uk-margin-small-right"></i> Create New Project</a></li>
@@ -65,7 +65,7 @@
             <div class="uk-width-8-10" ng-drop="true" ng-drop-success="dropped($data, $event)">
                 <div class="uk-panel uk-panel-box">
                     <div class="uk-width-1-1 uk-text-center">
-                        <h4><strong>Project A</strong></h4>
+                        <h4><strong>{{project.name}}</strong></h4>
                     </div>
                     <div class="uk-width-1-1 uk-margin-bottom">
                         <div class="uk-panel uk-panel-box vup-containers">
