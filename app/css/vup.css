@@ -24,19 +24,11 @@
     background-repeat: repeat-y;
 }
 
-.vup-settings:before
-{
-    content: "";
-    position: absolute;
-    width: 300%;
-    height: 300%;
-    top: -50%;
-    left: -50%;
-    z-index: -1;
-    background: url(../images/nginx-logo.png) 0 0 repeat;
-    -webkit-transform:  rotate(90deg);
-    -moz-transform:     rotate(90deg);
-    -o-transform:       rotate(90deg);
-    -ms-transform:      rotate(90deg);
-    transform:          rotate(90deg);
+[ng-drag], [ng-drag-clone]{
+    -moz-user-select: -moz-none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    cursor: move;
 }
