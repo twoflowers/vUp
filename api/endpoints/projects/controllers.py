@@ -53,12 +53,13 @@ def create():
         containers = args['containers']
 
     except Exception as e:
+        logger.error("failed to setup variables passed in because %s" % e, exc_info=True)
         raise errors.InvalidUsage()
 
-    if not isinstance(containers, list) or \
-            any(not isinstance(container, dict) for container in containers) or \
-            any(not isinstance(v, (int, unicode, str, long)) for con in containers for k, v in con.iteritems()):
-        raise errors.InvalidUsage("invalid container format")
+    # if not isinstance(containers, list) or \
+    #         any(not isinstance(container, dict) for container in containers) or \
+    #         any(not isinstance(v, (int, unicode, str, long)) for con in containers for k, v in con.iteritems()):
+    #     raise errors.InvalidUsage("invalid container format")
 
     try:
         return jsonified(data=models.create_project(name=name, containers=containers, version=version))
