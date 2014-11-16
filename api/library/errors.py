@@ -4,6 +4,9 @@ import logging
 # config
 from config import shared_config
 
+# shared
+from library import exc
+
 logger = logging.getLogger(shared_config.api_log_root_name + __name__)
 
 
@@ -35,7 +38,15 @@ class Errors(Exception):
 
     @message.setter
     def message(self, value):
-        self._message = value or self._message
+        if isinstance(value, Exception):
+            try:
+                self._message = value.message
+            except:
+                self._message = str(value)
+
+        else:
+            self._message = str(value)
+
 
     @property
     def status(self):
