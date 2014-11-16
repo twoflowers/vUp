@@ -31,9 +31,6 @@
     <nav class="uk-navbar uk-navbar-attached">
         <a href="" class="uk-navbar-brand">vUp</a>
         <ul class="uk-navbar-nav uk-navbar-flip uk-pull-right">
-            <!--<li>-->
-                <!--<a href=""><i class="uk-icon-bomb uk-margin-small-right"></i> Run</a>-->
-            <!--</li>-->
             <li class="uk-button-dropdown" data-uk-dropdown="">
                 <a href="">
                     <i class="uk-icon-archive uk-margin-small-right"></i>
@@ -163,6 +160,9 @@
                                                     </div>
                                                     <div class="uk-width-1-4">
                                                         <input type="text" ng-model="container.mysql_pass" class="vup-short-input">
+                                                    </div>
+                                                    <div class="uk-width-1-1 uk-margin-top">
+                                                        From your host, you can access this instance on {{container.info.mysql_port}}
                                                     </div>
                                                 </div>
                                             </div>

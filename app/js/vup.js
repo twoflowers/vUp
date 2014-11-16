@@ -47,16 +47,16 @@ vup.controller('dashboard', ['$rootScope', '$scope', '$location', '$http', 'loca
             'type': 'php',
             'volumes_from': 'storage'
         },
-        'uwsgi': {
-            'name': 'uwsgi',
-            'label': 'uwsgi',
-            'type': 'uwsgi'
-        },
-        'haproxy': {
-            'name': 'haproxy',
-            'label': 'ha proxy',
-            'type': 'haproxy'
-        },
+        //'uwsgi': {
+        //    'name': 'uwsgi',
+        //    'label': 'uwsgi',
+        //    'type': 'uwsgi'
+        //},
+        //'haproxy': {
+        //    'name': 'haproxy',
+        //    'label': 'ha proxy',
+        //    'type': 'haproxy'
+        //},
         'apache': {
             'name': 'apache',
             'label': 'apache',
