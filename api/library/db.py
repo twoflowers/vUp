@@ -1,6 +1,9 @@
 # builtin
 import logging
 
+# library
+from library import exc
+
 # config
 from config import shared_config
 
@@ -29,6 +32,7 @@ def keys(key=None):
         else:
             names = None
         return names
+
     except Exception as e:
         logger.error("failed to return key list because %s" % e, exc_info=True)
-        raise RuntimeError("failed to return key list because %s" % e)
+        raise exc.SystemInvalid("failed to return key list because %s" % e)

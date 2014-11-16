@@ -6,6 +6,7 @@ vup.controller('dashboard', ['$rootScope', '$scope', '$location', '$http', 'loca
     $scope.projects = [];
     $scope.project = {};
     $scope.project['name'] = 'Project';
+    $scope.project['containers'] = [];
 
     $scope.modal = null;
 
