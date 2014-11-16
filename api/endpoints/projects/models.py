@@ -53,7 +53,7 @@ def project_create(name, containers, version, project_id=None):
                 raise exc.UserInvalidUsage("failed because {s}".format(s=e.explanation))
 
         else:
-            raise exc.SystemInvalid("unable to create new project because {s}".format(s=e.message))
+            raise exc.SystemInvalid("unable to create new project because {s}".format(s=e.explanation))
 
     except Exception as e:
         logger.error("failed to create new project because %s" % e, exc_info=True)
@@ -90,11 +90,22 @@ def project_listing(project_id=None):
 
 
 
-
 def project_delete(project_id):
     if proj_exists(project_id):
         db.pipe.delete(name=proj_key(project_id)).execute()
         return {"project_id": project_id, "state": "destroyed"}
     else:
         raise exc.UserNotFound("no project with id {p}".format(p=project_id))
+
+
+def project_update(name, containers, version, project_id):
+    project_delete(project_id=project_id)
+    project_create(name=name, containers=containers, version=version)
+    return {"project_id": project_id, "updated": True}
+
+
+
+
+
+
 
