@@ -86,6 +86,8 @@ def get_container_info(docker_client, project_name, container_name):
                 }
         if '80/tcp' in container['NetworkSettings']['Ports']:
             data['url'] = get_host_port(docker_client, container['Id'], 80)
+        if '3306/tcp' in container['NetworkSettings']['Ports']:
+            data['mysql_port'] = get_host_port(docker_client, container['Id'], 3306).replace('http://', '').replace('/', '')
     except Exception as e:
         data = {}
         logger.error("Error trying to get container_info: %r" % e)

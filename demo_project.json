@@ -13,7 +13,8 @@
             "mysql_name": "demo",
             "mysql_user": "demouser",
             "mysql_pass": "demopass",
-            "mysql_sql": "/demoapp.sql"
+            "mysql_sql": "/demoapp.sql",
+            "ports": [3306]
         },
         {
             "name": "app",
