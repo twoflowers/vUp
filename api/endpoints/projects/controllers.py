@@ -23,6 +23,9 @@ def listing(project_id):
     try:
         return jsonified(data=models.project_listing(project_id=project_id))
 
+    except exc.UserNotFound as e:
+        raise errors.NotFound(e)
+
     except Exception as e:
         logger.error("unhandled error {e}".format(e=e), exc_info=True)
         raise errors.Unhandled()
