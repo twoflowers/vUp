@@ -12,9 +12,9 @@ logger = logging.getLogger(shared_config.api_log_root_name + __name__)
 pipe = redis.StrictRedis(host=shared_config.redis_host).pipeline()
 
 
-def keys():
-    results = pipe.keys("*").execute()[0]
+def keys(key=None):
     try:
+        results = pipe.keys(key or "*").execute()[0]
         if results:
             logger.debug("returning all names with details")
             for name in results: pipe.object(infotype="encoding", key=name)
