@@ -23,8 +23,8 @@ def proj_exists(project_id):
 
 
 # endpoint gate
-def create(name, containers, version):
-    project_id = int(time())
+def project_create(name, containers, version):
+    project_id = str(int(time()))
 
     try:
         project = {"id": project_id, "name": name, "version": version, "containers": containers}
@@ -38,11 +38,11 @@ def create(name, containers, version):
     return {"project_id": project_id, "created": True}
 
 
-def listing(listing_id=None):
+def project_listing(project_id=None):
     logger.debug("entered listing({args})".format(args=locals()))
 
-    if listing_id and not proj_exists(listing_id):
-        raise exc.UserNotFound("no project with id {i}".format(id=listing_id))
+    if project_id and not proj_exists(project_id):
+        raise exc.UserNotFound("no project with id {i}".format(id=project_id))
 
     try:  # pull all projects
         project_names = db.keys("projects:project:*") or []
@@ -55,15 +55,15 @@ def listing(listing_id=None):
         raise exc.SystemInvalid()
 
     projects = [json.loads(project) for project in db.pipe.execute()]
-    projects = projects if not listing_id else [proj for proj in projects]
+    projects = projects if not project_id else [proj for proj in projects]
 
-    if listing_id:  # pull only one project
-        projects = [project for project in projects if project["id"] == int(listing_id)]
-        logger.debug("project {n} exists, pulling detail".format(n=listing_id))
+    if project_id:  # pull only one project
+        projects = [project for project in projects if project["id"] == int(project_id)]
+        logger.debug("project {n} exists, pulling detail".format(n=project_id))
         if projects:
             return projects
         else:
-            raise exc.UserNotFound("no project with id {i}".format(i=listing_id))
+            raise exc.UserNotFound("no project with id {i}".format(i=project_id))
 
     else:  # return list of details
         return projects
