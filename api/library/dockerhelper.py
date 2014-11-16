@@ -1,5 +1,12 @@
+import logging
+# config
+from config import shared_config
 from docker import Client
+logger = logging.getLogger(shared_config.api_log_root_name + __name__)
 
+"""
+Call get_client first, and then pass it to the other functions
+"""
 
 def get_client(host_url):
     """ Returns a docker api client """
@@ -10,6 +17,7 @@ def get_client(host_url):
 
 def create_container(docker_client, image_name, container_name, env=None, links=None, ports=None, volumes=None, volumes_from=None, command=None):
     #  Links can be specified with the links argument. They can either be specified as a dictionary mapping name to alias or as a list of (name, alias) tuples.
+    logger.debug("Creating a new container with: %r" % locals())
     container = docker_client.create_container(image=image_name, environment=env, name=container_name, command=command)
     if volumes is not None:
         vol_binding = {}
@@ -32,9 +40,9 @@ def create_mysql(docker_client, container_name, db_name, db_user, db_pass=None, 
             }
     return create_container(docker_client, "mysql:latest", container_name, env)
 
-def create_nginx(docker_client, container_name):
+def create_nginx(docker_client, container_name, links=None):
     # Links can be specified with the links argument. They can either be specified as a dictionary mapping name to alias or as a list of (name, alias) tuples.
-    return create_container(docker_client=docker_client, image_name="debian", container_name=container_name, env=None, links=[('mysql1', 'mysql')])
+    return create_container(docker_client=docker_client, image_name="debian", container_name=container_name, env=None, links=links)
 
 def create_storage(docker_client, container_name, storage_url):
     if 'local://' in storage_url:
@@ -44,32 +52,45 @@ def create_storage(docker_client, container_name, storage_url):
     else:
         raise RuntimeError("%s not supported.  Use local://" % storage_url)
 
-def create_phpfpm(docker_client, container_name, storage_container, db_container):
-    return create_container(docker_client=docker_client, image_name="php-fpm", container_name=container_name, volumes_from=[storage_container], links=[(db_container, 'db')]) 
+def create_apache(docker_client, container_name, volumes_from, links):
+    return create_container(docker_client=docker_client, container_name=container_name, image_name="apache", volumes_from=volumes_from, links=links)
+
+def create_phpfpm(docker_client, container_name, volumes_from, links):
+    return create_container(docker_client=docker_client, image_name="php-fpm", container_name=container_name, volumes_from=[volumes_from], links=links) 
 
 def get_ip(docker_client, container_id):
     return docker_client.inspect_container(container=container_id)['NetworkSettings']['IPAddress']
 
 def create_containers_from_proj(docker_client, project_name, project_containers):
-    prefix = project_name.strip().replace(' ').lower() + "_"
+    prefix = project_name.strip().replace(' ', '_').lower() + "_"
     # TODO: Get a list of existing containers for project
     # TODO: Error handling
     for container in project_containers:
-        clean_name = container['name'].strip().replace(' ').lower()
+        clean_name = container['name'].strip().replace(' ', '_').lower()
         container_name = "%s%s" % (prefix, clean_name) 
+        logger.debug("Checking if we need to create container_name: %s container_type: %s" % (container_name, container['type']))
 
         if 'link' in container:
             links = []
             for link in container['link']:
-                links.append(("%s%s" % (prefix, link.strip().replace(" ").lower())), link)
+                links.append(("%s%s" % (prefix, link.strip().replace(" ", '').lower()), link))
         else:
             links = None
 
+        if 'volumes_from' in container:
+            volumes_from = "%s%s" % (prefix, container['volumes_from'].strip().replace(" ", '').lower())
+        else:
+            volumes_from = None
+
         if container['type'] == "storage":
-            return create_storage(docker_client=docker_client, container_name=container_name, storage_url=container['data_source'])
+            result = create_storage(docker_client=docker_client, container_name=container_name, storage_url=container['data_source'])
         elif container['type'] == "nginx":
-            return create_nginx(docker_client=docker_client, container_name=container_name, links=links)
+            result = create_nginx(docker_client=docker_client, container_name=container_name, links=links)
+        elif container['type'] == "apache":
+            result = create_apache(docker_client=docker_client, container_name=container_name, links=links, volumes_from=volumes_from)
         elif container['type'] == "mysql":
-            return create_mysql(docker_client=docker_client, container_name=container_name, db_name=container['mysql_name'], db_user=container['mysql_user'], db_pass=container['mysql_pass'], db_sql=container['mysql_sql'])
+            result = create_mysql(docker_client=docker_client, container_name=container_name, db_name=container['mysql_name'], db_user=container['mysql_user'], db_pass=container['mysql_pass'], db_sql=container['mysql_sql'])
         elif container['type'] == "php":
-            return create_phpfpm(docker_client=docker_client, container_name=container_name, volumes_from=[container['volumes_from']], links=links)
+            result = create_phpfpm(docker_client=docker_client, container_name=container_name, volumes_from=volumes_from, links=links)
+
+    return True

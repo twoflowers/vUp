@@ -6,6 +6,7 @@ from time import time
 # shared
 from library import db
 from library import exc
+from library import dockerhelper as docker
 
 # config
 from config import shared_config
@@ -30,6 +31,8 @@ def create(name, containers, version):
     try:
         project = {"id": int(time()), "name": name, "version": version, "containers": containers}
         db.pipe.set(name=proj_name(name), value=json.dumps(project)).execute()
+        c = docker.get_client(host_url="tcp://docker1:2375")
+        docker.create_containers_from_proj(docker_client=c, project_name=name, project_containers=containers)
 
     except Exception as e:
         logger.error("failed to create new project because %s" % e, exc_info=True)
