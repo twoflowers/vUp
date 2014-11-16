@@ -125,6 +125,7 @@ def create_containers_from_proj(docker_client, project_name, project_containers)
     # TODO: Get a list of existing containers for project
     # TODO: Error handling
     php_app_ip = None
+    mysql_env = None
     for container in process_deps(project_containers):
         clean_name = container['name'].strip().replace(' ', '_').lower()
         container_name = "%s%s" % (prefix, clean_name) 
@@ -149,6 +150,8 @@ def create_containers_from_proj(docker_client, project_name, project_containers)
 
         if php_app_ip is not None:
             env['PHP_FPM_IP'] = php_app_ip
+        if mysql_env is not None:
+            env = env.update(mysql_env)
 
         ports = None if 'ports' not in container else container['ports']
 
@@ -160,6 +163,12 @@ def create_containers_from_proj(docker_client, project_name, project_containers)
             result = create_apache(docker_client=docker_client, container_name=container_name, links=links, volumes_from=volumes_from, ports=ports)
         elif container['type'] == "mysql":
             result = create_mysql(docker_client=docker_client, container_name=container_name, db_name=container['mysql_name'], db_user=container['mysql_user'], db_pass=container['mysql_pass'], db_sql=container['mysql_sql'], ports=ports)
+            mysql_env = {
+                        'mysql_user': container['mysql_user'],
+                        'mysql_pass': container['mysql_pass'],
+                        'mysql_host': get_ip(docker_client, result),
+                        'mysql_name': container['mysql_name']
+                    }
         elif container['type'] == "php":
             result = create_phpfpm(docker_client=docker_client, container_name=container_name, volumes_from=volumes_from, links=links)
             php_app_ip = get_ip(docker_client, result)
