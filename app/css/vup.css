@@ -1,3 +1,6 @@
 .vup-containers {
-    border: 1px dashed;
+    border: 1px dashed #999;
+}
+.vup-project-title {
+    font-size: 16px;
 }

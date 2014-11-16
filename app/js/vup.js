@@ -7,7 +7,7 @@ vup.controller('dashboard', ['$rootScope', '$scope', '$location', '$http', 'loca
         message : 'Good news, everybody!',
         status  : 'info',
         timeout : 5000,
-        pos     : 'top-center'
+        pos     : 'bottom-center'
     });
 }]);
 
