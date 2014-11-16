@@ -28,14 +28,16 @@
             "type": "nginx",
             "link": ["app"],
             "scale_min": 1,
-            "scale_max": 3
+            "scale_max": 3,
+            "ports": [80, 443]
         },
         {
             "name": "apache1",
             "type": "apache",
             "link": ["app", "db"],
             "scale_min": 1,
-            "scale_max": 3
+            "scale_max": 3,
+            "ports": [80, 443]
         }
     ]
 }
