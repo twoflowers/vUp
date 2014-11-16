@@ -116,7 +116,6 @@ def create_containers_from_proj(docker_client, project_name, project_containers)
     prefix = project_name.strip().replace(' ', '_').lower() + "_"
     # TODO: Get a list of existing containers for project
     # TODO: Error handling
-    logger.debug("Does this work? %r" % process_deps(project_containers))
     php_app_ip = None
     for container in process_deps(project_containers):
         clean_name = container['name'].strip().replace(' ', '_').lower()
@@ -137,10 +136,11 @@ def create_containers_from_proj(docker_client, project_name, project_containers)
 
         if 'env' in container:
             env = container['env']
-            if php_app_ip is not None:
-                env['PHP_FPM_IP'] = php_app_ip
         else:
-            env = None
+            env = {} 
+
+        if php_app_ip is not None:
+            env['PHP_FPM_IP'] = php_app_ip
 
         ports = None if 'ports' not in container else container['ports']
 

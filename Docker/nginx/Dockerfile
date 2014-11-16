@@ -9,4 +9,4 @@ RUN echo "daemon off;" >> /etc/nginx/nginx.conf
 
 EXPOSE 80 81 4001 3001 4001/udp 3001/udp
 
-CMD /usr/sbin/nginx -c /etc/nginx/nginx.conf
+CMD /run.sh
