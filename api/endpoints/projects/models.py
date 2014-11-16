@@ -71,7 +71,7 @@ def project_delete(project_id):
 
     try:
         project = project_listing(project_id)
-        db.pipe.delete(key=proj_id(project_id))
+        db.pipe.delete(key=proj_key(project_id))
         c = docker.get_client(host_url="tcp://docker1:2375")
         docker.delete_all_containers_from_proj(docker_client=c, project_name=project["name"])
 
@@ -104,15 +104,6 @@ def project_listing(project_id=None):
     projects = [json.loads(project) for project in results]
     logger.debug("returning project(s) {p}".format(p=projects))
     return projects
-
-
-
-def project_delete(project_id):
-    if proj_exists(project_id):
-        db.pipe.delete(name=proj_key(project_id)).execute()
-        return {"project_id": project_id, "state": "destroyed"}
-    else:
-        raise exc.UserNotFound("no project with id {p}".format(p=project_id))
 
 
 def project_update(name, containers, version, project_id):
