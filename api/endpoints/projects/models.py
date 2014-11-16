@@ -11,6 +11,9 @@ from library import dockerhelper as docker
 # config
 from config import shared_config
 
+# third party
+from docker.errors import APIError
+
 logger = logging.getLogger(shared_config.api_log_root_name + __name__)
 
 
@@ -41,6 +44,16 @@ def project_create(name, containers, version, project_id=None):
         db.pipe.set(name=proj_key(new_project_id), value=json.dumps(project)).execute()
         c = docker.get_client(host_url="tcp://docker1:2375")
         docker.create_containers_from_proj(docker_client=c, project_name=name, project_containers=containers)
+
+    except APIError as e:
+        if e.is_client_error():
+            if "409" in str(e.response):
+                raise exc.UserInvalidUsage("Project name '{n}' is already taken".format(n=name))
+            else:
+                raise exc.UserInvalidUsage("failed because {s}".format(s=e.explanation))
+
+        else:
+            raise exc.SystemInvalid("unable to create new project because {s}".format(s=e.message))
 
     except Exception as e:
         logger.error("failed to create new project because %s" % e, exc_info=True)
