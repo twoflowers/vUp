@@ -24,12 +24,16 @@ uwsgi-plugin-python:
     - replace: false
     - owner: www-data
     - group: www-data
+    - watch_in:
+      - service: uwsgi
 /var/log/vup-debug.log:
   file.managed:
     - contents: ""
     - replace: false
     - owner: www-data
     - group: www-data
+    - watch_in:
+      - service: uwsgi
 api_deps:
   pip.installed:
     - require_in: 
