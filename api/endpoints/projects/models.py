@@ -77,6 +77,7 @@ def project_delete(project_id):
         raise exc.SystemInvalid()
 
     try:
+        project = project_listing(project_id)
         c = docker.get_client(host_url="tcp://docker1:2375")
         docker.delete_all_containers_from_proj(docker_client=c, project_name=project["name"])
         return {"project_id": project_id, "state": "destroyed"}

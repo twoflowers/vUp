@@ -40,16 +40,16 @@ def create_container(docker_client, image_name, container_name, env=None, links=
     return container.get('Id')
     
 
-def create_mysql(docker_client, container_name, db_name, db_user, db_pass=None, db_sql=None):
+def create_mysql(docker_client, container_name, db_name, db_user, db_pass=None, db_sql=None, ports=None):
     env = {
                 "MYSQL_USER": db_user,
                 "MYSQL_PASS": db_pass if db_pass is not None else "**Random**",
             }
-    return create_container(docker_client, "vups/vup_mysql", container_name, env)
+    return create_container(docker_client=docker_client, image_name="vups/vup_mysql", container_name=container_name, env=env, ports=ports)
 
-def create_nginx(docker_client, container_name, links=None, ports=None):
+def create_nginx(docker_client, container_name, links=None, ports=None, env=None):
     # Links can be specified with the links argument. They can either be specified as a dictionary mapping name to alias or as a list of (name, alias) tuples.
-    return create_container(docker_client=docker_client, image_name="vups/vup_nginx", container_name=container_name, env=None, links=links, ports=ports)
+    return create_container(docker_client=docker_client, image_name="vups/vup_nginx", container_name=container_name, env=env, links=links, ports=ports)
 
 def create_storage(docker_client, container_name, storage_url):
     if 'local://' in storage_url:
@@ -93,11 +93,31 @@ def get_container_info(docker_client, project_name, container_name):
     return data
 
 
+def process_deps_type(containers, type):
+    new_containers = []
+    for c in containers:
+        if c['type'] == type:
+            new_containers.append(c)
+    return new_containers
+        
+
+def process_deps(project_containers):
+    """ Takes a list of containers, and returns an ordered list in the order they should be provisioned. """
+    new_containers = []
+    # Find storage first
+    new_containers = new_containers + process_deps_type(project_containers, 'storage')
+    new_containers = new_containers + process_deps_type(project_containers, 'mysql')
+    new_containers = new_containers + process_deps_type(project_containers, 'php')
+    new_containers = new_containers + process_deps_type(project_containers, 'nginx')
+    new_containers = new_containers + process_deps_type(project_containers, 'apache')
+    return new_containers
+
 def create_containers_from_proj(docker_client, project_name, project_containers):
     prefix = project_name.strip().replace(' ', '_').lower() + "_"
     # TODO: Get a list of existing containers for project
     # TODO: Error handling
-    for container in project_containers:
+    php_app_ip = None
+    for container in process_deps(project_containers):
         clean_name = container['name'].strip().replace(' ', '_').lower()
         container_name = "%s%s" % (prefix, clean_name) 
         logger.debug("Checking if we need to create container_name: %s container_type: %s" % (container_name, container['type']))
@@ -114,18 +134,27 @@ def create_containers_from_proj(docker_client, project_name, project_containers)
         else:
             volumes_from = None
 
+        if 'env' in container:
+            env = container['env']
+        else:
+            env = {} 
+
+        if php_app_ip is not None:
+            env['PHP_FPM_IP'] = php_app_ip
+
         ports = None if 'ports' not in container else container['ports']
 
         if container['type'] == "storage":
             result = create_storage(docker_client=docker_client, container_name=container_name, storage_url=container['data_source'])
         elif container['type'] == "nginx":
-            result = create_nginx(docker_client=docker_client, container_name=container_name, links=links, ports=ports)
+            result = create_nginx(docker_client=docker_client, container_name=container_name, links=links, ports=ports, env=env)
         elif container['type'] == "apache":
             result = create_apache(docker_client=docker_client, container_name=container_name, links=links, volumes_from=volumes_from, ports=ports)
         elif container['type'] == "mysql":
-            result = create_mysql(docker_client=docker_client, container_name=container_name, db_name=container['mysql_name'], db_user=container['mysql_user'], db_pass=container['mysql_pass'], db_sql=container['mysql_sql'])
+            result = create_mysql(docker_client=docker_client, container_name=container_name, db_name=container['mysql_name'], db_user=container['mysql_user'], db_pass=container['mysql_pass'], db_sql=container['mysql_sql'], ports=ports)
         elif container['type'] == "php":
             result = create_phpfpm(docker_client=docker_client, container_name=container_name, volumes_from=volumes_from, links=links)
+            php_app_ip = get_ip(docker_client, result)
 
     return True
 

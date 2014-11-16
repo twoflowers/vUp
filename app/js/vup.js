@@ -4,7 +4,7 @@ vup.controller('dashboard', ['$rootScope', '$scope', '$location', '$http', 'loca
     console.log("Dashboard started.");
 
     $scope.notification = {};
-    $scope.notification['timeout'] = 500;
+    $scope.notification['timeout'] = 1500;
     $scope.notification['position'] = 'bottom-center';
 
     $scope.projects = [];
@@ -25,31 +25,43 @@ vup.controller('dashboard', ['$rootScope', '$scope', '$location', '$http', 'loca
     $scope.stacklets = {
         'nginx': {
             'name': 'nginx',
-            'label': 'nginx'
+            'label': 'nginx',
+            'type': 'nginx'
         },
         'mysql': {
             'name': 'mysql',
-            'label': 'mysql'
+            'label': 'mysql',
+            'type': 'mysql',
+            'mysql_name': 'demo',
+            'mysql_user': 'demouser',
+            'mysql_pass': 'demopass',
+            'mysql_sql': 'whateverIwant!',
+            "ports": [3306]
         },
         'php': {
             'name': 'php',
-            'label': 'php'
+            'label': 'php',
+            'type': 'php'
         },
         'uwsgi': {
             'name': 'uwsgi',
-            'label': 'uwsgi'
+            'label': 'uwsgi',
+            'type': 'uwsgi'
         },
         'haproxy': {
             'name': 'haproxy',
-            'label': 'ha proxy'
+            'label': 'ha proxy',
+            'type': 'haproxy'
         },
         'apache': {
             'name': 'apache',
-            'label': 'apache'
+            'label': 'apache',
+            'type': 'apache'
         },
         'folder': {
             'name': 'folder',
-            'label': 'source folder'
+            'label': 'source folder',
+            'type': 'folder'
         }
     };
 

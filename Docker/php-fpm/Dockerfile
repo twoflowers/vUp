@@ -10,8 +10,6 @@ RUN mkdir /data;mkdir /var/www
 
 ADD www.conf /etc/php5/fpm/pool.d/www.conf
 
-RUN service php5-fpm start
-
 EXPOSE 9000
 
 WORKDIR /data
