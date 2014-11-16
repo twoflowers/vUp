@@ -3,12 +3,44 @@ var vup = angular.module('vup', ['LocalStorageModule']);
 vup.controller('dashboard', ['$rootScope', '$scope', '$location', '$http', 'localStorageService', function ($rootScope, $scope, $location, $http, localStorageService) {
     console.log("Dashboard started.");
 
-    jQuery.UIkit.notify({
-        message : 'Good news, everybody!',
-        status  : 'info',
-        timeout : 5000,
-        pos     : 'top-center'
-    });
+    $scope.projects = [];
+    $scope.project = null;
+
+    var apiUrl = '';
+
+    $scope.refresh = function () {
+        if ($scope.refreshPending) return;
+        $scope.refreshPending = true;
+
+        $http({method: 'GET', url: apiUrl + '/projects'})
+            .success(function (response) {
+                $scope.projects = response.data;
+                $rootScope.$broadcast('Blocks:Change');
+                $scope.refreshPending = false;
+                $scope.loading = false;
+                $scope.notify({
+                    message : 'Good news, everybody! ',
+                    status  : 'success',
+                    timeout : 3000,
+                    pos     : 'bottom-center'
+                });
+            })
+            .error(function (error) {
+                $scope.projects = [];
+                $scope.refreshPending = false;
+                $scope.loading = false;
+                console.log('Failed to list projects...', error);
+                $scope.notify({
+                    message : 'Bad news, everybody! ' + error,
+                    status  : 'danger',
+                    timeout : 3000,
+                    pos     : 'bottom-center'
+                });
+            });
+    };
+
+    $scope.notify = jQuery.UIkit.notify;
+    $scope.refresh();
 }]);
 
 /* Start angularLocalStorage */

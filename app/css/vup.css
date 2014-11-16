@@ -1,3 +1,42 @@
 .vup-containers {
-    border: 1px dashed;
+    border: 1px dashed #999;
+}
+.vup-project-title {
+    font-size: 16px;
+}
+
+.vup-90-deg {
+    -webkit-transform:  rotate(-90deg);
+    -moz-transform:     rotate(-90deg);
+    -o-transform:       rotate(-90deg);
+    -ms-transform:      rotate(-90deg);
+    transform:          rotate(-90deg);
+}
+
+.vup-settings-logo {
+    margin-left: -15px;
+    margin-top: -15px;
+    margin-bottom: -15px !important;
+    height: 150px;
+    background-image: url(../images/apache-logo-v.png);
+    background-position: bottom left;
+    background-size: contain;
+    background-repeat: repeat-y;
+}
+
+.vup-settings:before
+{
+    content: "";
+    position: absolute;
+    width: 300%;
+    height: 300%;
+    top: -50%;
+    left: -50%;
+    z-index: -1;
+    background: url(../images/nginx-logo.png) 0 0 repeat;
+    -webkit-transform:  rotate(90deg);
+    -moz-transform:     rotate(90deg);
+    -o-transform:       rotate(90deg);
+    -ms-transform:      rotate(90deg);
+    transform:          rotate(90deg);
 }
