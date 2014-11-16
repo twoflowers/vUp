@@ -6,6 +6,7 @@ from config import shared_config
 
 logger = logging.getLogger(shared_config.api_log_root_name + __name__)
 
+
 class Errors(Exception):
 
     _message = "Whoops! You found a spot that's not working properly"
