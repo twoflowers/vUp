@@ -63,7 +63,7 @@
                     <div class="uk-panel-teaser">
                         <img ng-src="images/{{stacklet.name}}-logo.png" alt="">
                     </div>
-                    <h4 class="uk-text-center uk-margin-small-top">{{stacklet.name}}</h4>
+                    <h4 class="uk-text-center uk-margin-small-top">{{stacklet.label}}</h4>
                 </div>
             </div>
             <div class="uk-width-8-10" ng-drop="true" ng-drop-success="dropped($data, $event)">
@@ -93,8 +93,17 @@
                                     <div class="uk-background-cover vup-settings-logo" style="background-image: url(images/{{container.name}}-logo-v.png)"></div>
                                 </div>
                                 <div class="uk-width-8-10">
-
-                                    <h4>{{container.name}}</h4>
+                                    <h4>{{container.label}}</h4>
+                                    <hr class="uk-article-divider uk-margin-small-top uk-margin-small-bottom">
+                                    <div ng-show="container.name == 'apache' && container.ip">
+                                        IP: {{container.ip}}
+                                        URL: <a href="http://{{container.url}}">{{container.url}}</a>
+                                    </div>
+                                    <div ng-show="container.name == 'php'">
+                                        Status:
+                                        <div class="uk-badge uk-badge-success"><i class="uk-icon-check uk-margin-small-right"></i> RUNNING</div>
+                                        <div class="uk-badge uk-badge-danger"><i class="uk-icon-close uk-margin-small-right"></i> STOPPED</div>
+                                    </div>
                                 </div>
                                 <div class="uk-width-1-10 uk-text-right">
                                     <a href="" class="uk-close uk-close-alt" ng-click="deleteContainer(container)"></a>
