@@ -137,4 +137,4 @@ def delete_all_containers_from_proj(docker_client, project_name):
         for container_name in c['Names']:
             if prefix in container_name:
                 logger.info("Deleting container with name: %s" % container_name)
-                c.remove_container(container=c['Id'], force=True)
+                docker_client.remove_container(container=c['Id'], force=True)
