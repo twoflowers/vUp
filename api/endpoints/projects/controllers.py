@@ -30,19 +30,6 @@ def listing(project_id):
         logger.error("unhandled error {e}".format(e=e), exc_info=True)
         raise errors.Unhandled()
 
-
-@projects_blueprint.route("/<project_id>", methods=['PUT'])
-def update(project_id):
-    try:
-        args = request.get_json(force=True)
-        project_name = args.get('name')
-        project_version = args.get('version')
-        project_containers = args.get('containers')
-        project_map = {"name": "projects:{n}".format(n=project_name or project_id), "version": project_version}
-
-    except Exception:
-        raise errors.InvalidUsage()
-
 @projects_blueprint.route("/<project_id>", methods=['DELETE'])
 def remove(project_id):
     try:
@@ -58,9 +45,9 @@ def remove(project_id):
         logger.error("failed to delete because %s" % e, exc_info=True)
         raise errors.InvalidUsage()
 
-
-@projects_blueprint.route("/", methods=["POST"])
-def create():
+@projects_blueprint.route("/<project_id>", methods=['PUT'])
+@projects_blueprint.route("/", methods=["POST"], defaults={"project_id": None})
+def create_or_update(project_id):
     try:  # get project fields
         args = request.get_json(force=True)
         name = args['name']
@@ -72,7 +59,11 @@ def create():
         raise errors.InvalidUsage()
 
     try:
-        return jsonified(data=models.project_create(name=name, containers=containers, version=version))
+        if request.method.upper() == "POST":
+            return jsonified(data=models.project_create(name=name, containers=containers, version=version))
+        else:
+            return jsonified(data=models.project_update(name=name, containers=containers, version=version,
+                                                        project_id=project_id))
 
     except exc.SystemInvalid as e:
         raise errors.Unhandled(e)
@@ -83,5 +74,6 @@ def create():
         logger.error("failed to create new project because %s" % e, exc_info=True)
         # TODO rollback on error, deleting keys possibly created
         raise errors.Unhandled()
+
 
 
