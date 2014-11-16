@@ -57,3 +57,18 @@ def create_project(name, containers, version):
         raise errors.Unhandled()
 
     return {"project": name, "created": True, "value": project}
+
+
+def listing(project_name=None):
+    if project_name:  # return only that project
+        if proj_exists(name=project_name):
+            return json.loads(db.pipe.get(name=proj_name(name=project_name)).execute())
+        else:
+            raise errors.NotFound()
+    else:
+        project_names = db.keys("projects:project:")
+
+        for name in project_names:
+            db.pipe.get(name=name)
+
+        return [json.loads(project) for project in db.pipe.execute()]
