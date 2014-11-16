@@ -6,6 +6,7 @@ from time import time
 # shared
 from library import db
 from library import exc
+from library import dockerhelper as docker
 
 # config
 from config import shared_config
@@ -29,6 +30,8 @@ def project_create(name, containers, version):
     try:
         project = {"id": project_id, "name": name, "version": version, "containers": containers}
         db.pipe.set(name=proj_id(project_id), value=json.dumps(project)).execute()
+        c = docker.get_client(host_url="tcp://docker1:2375")
+        docker.create_containers_from_proj(docker_client=c, project_name=name, project_containers=containers)
 
     except Exception as e:
         logger.error("failed to create new project because %s" % e, exc_info=True)
@@ -70,5 +73,8 @@ def project_listing(project_id=None):
 
 
 def update(listing_id):
-
-    pass
+    try:
+        return [json.loads(project) for project in db.pipe.execute()]
+    except Exception as e:
+        logger.error("failed to list projects because %s" % e, exc_info=True)
+        raise exc.SystemInvalid()
