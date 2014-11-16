@@ -45,8 +45,7 @@ vup.controller('dashboard', ['$rootScope', '$scope', '$location', '$http', 'loca
             'name': 'php',
             'label': 'php',
             'type': 'php',
-            'volumes_from': 'storage',
-            'link': ['mysql']
+            'volumes_from': 'storage'
         },
         'uwsgi': {
             'name': 'uwsgi',
@@ -65,8 +64,8 @@ vup.controller('dashboard', ['$rootScope', '$scope', '$location', '$http', 'loca
             'ports': [80, 443],
             'volumes_from': 'storage'
         },
-        'folder': {
-            'name': 'folder',
+        'storage': {
+            'name': 'storage',
             'label': 'source folder',
             'type': 'storage',
             'data_source': "local:///home/vagrant/"
@@ -87,6 +86,27 @@ vup.controller('dashboard', ['$rootScope', '$scope', '$location', '$http', 'loca
         }
 
         $scope.project.containers.push(data);
+
+        var hasStorage = false;
+        for (var index in $scope.project.containers) {
+            if ($scope.project.containers[index].type == 'storage') {
+                hasStorage = true;
+            }
+        }
+
+        if (data.type == 'nginx') {
+            if (!hasStorage) {
+                $scope.project.containers.push($scope.stacklets.php);
+                $scope.project.containers.push($scope.stacklets.storage);
+            }
+        }
+
+        if (data.type == 'apache') {
+            if (!hasStorage) {
+                $scope.project.containers.push($scope.stacklets.storage)
+            }
+        }
+
         $rootScope.$broadcast('Project:LocalChange');
     };
 
@@ -197,17 +217,16 @@ vup.controller('dashboard', ['$rootScope', '$scope', '$location', '$http', 'loca
             method = 'POST';
         }
 
-
-
         console.log(method, $scope.project);
 
         $http({method: method, data: $scope.project, url: apiUrl + url})
             .success(function (response) {
-                $scope.projects = response.data;
+                $scope.project.id = response.data.project_id;
                 $rootScope.$broadcast('Project:Change');
                 $scope.refreshPending = false;
                 $scope.loading = false;
                 $scope.notify('<i class="uk-icon-save"></i> Updated project successfully!', 'success');
+                $scope.refresh();
             })
             .error(function (error) {
                 $scope.projects = [];
@@ -215,9 +234,8 @@ vup.controller('dashboard', ['$rootScope', '$scope', '$location', '$http', 'loca
                 $scope.loading = false;
                 console.log('Failed to update project...', error);
                 $scope.notify('Bad news, everybody! ' + error, 'danger');
+                $scope.refresh();
             });
-
-        $scope.refresh();
     });
 
     $scope.notify = function (text, status) {

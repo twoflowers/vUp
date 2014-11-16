@@ -106,6 +106,22 @@
                                         <div class="uk-badge uk-badge-danger"><i class="uk-icon-close uk-margin-small-right"></i> STOPPED</div>
                                     </div>
 
+                                    <div ng-show="container.type == 'nginx'">
+                                        <form class="uk-form">
+                                            <div class="uk-form-row">
+                                                <div class="uk-form-controls uk-grid">
+                                                    <div class="uk-width-1-4">
+                                                        URL:
+                                                    </div>
+                                                    <div class="uk-width-1-4">
+                                                        <a href="{{container.info.url}}">{{container.info.url}}</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+
+
                                     <div ng-show="container.type == 'storage'">
                                         <form class="uk-form">
                                             <div class="uk-form-row">
