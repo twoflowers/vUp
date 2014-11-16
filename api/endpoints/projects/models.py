@@ -18,10 +18,6 @@ def proj_name_encode(name):
     return str(name).encode('base64', 'strict')
 
 
-def proj_name_decode(name):
-    return str(name.decode('base64', 'strict'))
-
-
 def proj_name(name):
     return "projects:project:" + proj_name_encode(name)
 
@@ -39,18 +35,8 @@ def create(name, containers, version):
     if proj_exists(name):
         raise errors.InvalidUsage("unable to overwrite existing project")
 
-    project = {"name": name,
-               "version": version,
-               "containers": containers}
-    # db.pipe.hmset(name=proj_name(name), mapping=project)  # establish project
-    #
-    # for i, container in enumerate(containers):
-    #     db.pipe.hmset(name=cons_name(name, element=i), mapping=container)  # establish container
-    #
-    # try:
-    #     result = db.pipe.execute()
-    #     logger.debug("successfully created new project, results {r}".format(r=result))
     try:
+        project = {"name": name, "version": version, "containers": containers}
         db.pipe.set(name=proj_name(name), value=json.dumps(project)).execute()
 
     except Exception as e:
