@@ -71,9 +71,9 @@ def project_delete(project_id):
 
     try:
         project = project_listing(project_id)
-        db.pipe.delete(key=proj_id(project_id))
         c = docker.get_client(host_url="tcp://docker1:2375")
         docker.delete_all_containers_from_proj(docker_client=c, project_name=project["name"])
+        db.pipe.delete(key=proj_key(project_id))
 
     except Exception as e:
         logger.error("failed to delete project because %s" % e, exc_info=True)
