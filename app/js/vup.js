@@ -29,7 +29,7 @@ vup.controller('dashboard', ['$rootScope', '$scope', '$location', '$http', 'loca
             'type': 'nginx',
             'link': ['php'],
             'ports': [80, 443],
-            'volumes_from': 'folder'
+            'volumes_from': 'storage'
         },
         'mysql': {
             'name': 'mysql',
@@ -45,7 +45,7 @@ vup.controller('dashboard', ['$rootScope', '$scope', '$location', '$http', 'loca
             'name': 'php',
             'label': 'php',
             'type': 'php',
-            'volumes_from': 'folder',
+            'volumes_from': 'storage',
             'link': ['mysql']
         },
         'uwsgi': {
@@ -63,7 +63,7 @@ vup.controller('dashboard', ['$rootScope', '$scope', '$location', '$http', 'loca
             'label': 'apache',
             'type': 'apache',
             'ports': [80, 443],
-            'volumes_from': 'folder'
+            'volumes_from': 'storage'
         },
         'folder': {
             'name': 'folder',
