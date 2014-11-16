@@ -12,18 +12,21 @@ logger = logging.getLogger(shared_config.api_log_root_name + __name__)
 
 # helpers
 
+
 def proj_name_encode(name):
     return str(name).encode('base64', 'strict')
 
+
 def proj_name_decode(name):
     return str(name.decode('base64', 'strict'))
+
 
 def proj_name(name):
     return "projects:project:" + proj_name_encode(name)
 
 
 def cons_name(name, element):
-    return proj_name(name) + ":containers:" + element
+    return "{proj}{cont}{elem}".format(proj=proj_name(name), cont=":containers:", elem=element)
 
 
 def proj_exists(name):
