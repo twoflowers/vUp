@@ -59,6 +59,8 @@ def create():
     try:
         return jsonified(data=models.project_create(name=name, containers=containers, version=version))
 
+    except exc.SystemInvalid as e:
+        raise errors.Unhandled(e)
     except exc.UserInvalidUsage as e:
         raise errors.InvalidUsage(e)
 
