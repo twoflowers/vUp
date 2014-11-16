@@ -49,7 +49,7 @@ def create(name, containers, version):
     #     result = db.pipe.execute()
     #     logger.debug("successfully created new project, results {r}".format(r=result))
     try:
-        db.pipe.set(name=proj_name(name), value=json.dumps(project))
+        db.pipe.set(name=proj_name(name), value=json.dumps(project)).execute()
 
     except Exception as e:
         logger.error("failed to create new project because %s" % e, exc_info=True)
