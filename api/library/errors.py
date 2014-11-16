@@ -49,6 +49,11 @@ class Errors(Exception):
         return {"message": self.message, "status_code": self.status, "payload": self.payload}
 
 
+class InvalidUsage(Errors):
+    _message = "You're not holding it right..."
+    _status_code = 400
+
+
 class NotFound(Errors):
     _message = "The thing that you thought you were looking for is not found in the place you'd wish it was..."
     _status_code = 404
