@@ -21,7 +21,7 @@ logger = logging.getLogger(shared_config.api_log_root_name + __name__)
 @projects_blueprint.route('/<project_name>', methods=['GET'])
 def listing(project_name):
     try:
-        return jsonified(data=models.listing(project_name=project_name))
+        return jsonified(data=models.listing(name=project_name))
 
     except Exception as e:
         logger.error("unhandled error {e}".format(e=e), exc_info=True)
@@ -62,7 +62,7 @@ def create():
     #     raise errors.InvalidUsage("invalid container format")
 
     try:
-        return jsonified(data=models.create_project(name=name, containers=containers, version=version))
+        return jsonified(data=models.create(name=name, containers=containers, version=version))
 
     except Exception as e:
         logger.error("failed to create new project because %s" % e, exc_info=True)

@@ -35,7 +35,7 @@ def proj_exists(name):
 
 
 # endpoint gate
-def create_project(name, containers, version):
+def create(name, containers, version):
     if proj_exists(name):
         raise errors.InvalidUsage("unable to overwrite existing project")
 
@@ -59,10 +59,10 @@ def create_project(name, containers, version):
     return {"project": name, "created": True, "value": project}
 
 
-def listing(project_name=None):
-    if project_name:  # return only that project
-        if proj_exists(name=project_name):
-            return json.loads(db.pipe.get(name=proj_name(name=project_name)).execute())
+def listing(name=None):
+    if name:  # return only that project
+        if proj_exists(name=name):
+            return json.loads(db.pipe.get(name=proj_name(name=name)).execute())
         else:
             raise errors.NotFound()
     else:
