@@ -58,4 +58,4 @@ def listing(name=None):
             return [json.loads(project) for project in db.pipe.execute()]
         except Exception as e:
             logger.error("failed to list projects because %s" % e, exc_info=True)
-            raise errors.Unhandled()
+            raise exc.SystemInvalid()
