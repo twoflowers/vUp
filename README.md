@@ -26,5 +26,5 @@ This is an issue [with `uWsgi` in vagrant][issue9].
 What it will look like once the components are in place
 ![The Project](http://i.imgur.com/RAYwMMh.png?1)
 
-
-
+[vagrant]: https://www.vagrantup.com/
+[issue9]: https://github.com/twoflowers/vUp/issues/9
